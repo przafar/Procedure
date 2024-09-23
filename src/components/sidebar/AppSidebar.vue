@@ -1,9 +1,10 @@
 <template>
   <VaSidebar v-model="writableVisible" :width="sidebarWidth" :color="color" minimized-width="0">
     <VaAccordion v-model="value" multiple>
-      <VaCollapse v-for="(route, index) in navigationRoutes.routes" :key="index">
-        <template #header="{ value: isCollapsed }">
+      <VaCollapse v-for="(route, index) in navigationRoutes.routes" :key="index" >
+        <template  #header="{ value: isCollapsed }">
           <VaSidebarItem
+            v-if="vCan.can(route.visible)"
             :to="route.children ? undefined : { name: route.name }"
             :active="routeHasActiveChild(route)"
             :active-color="activeColor"
@@ -13,13 +14,12 @@
             hover-opacity="0.10"
           >
             <VaSidebarItemContent class="py-3 pr-2 pl-4">
-              <VaIcon
+              <i
                 v-if="route.meta.icon"
-                aria-hidden="true"
-                :name="route.meta.icon"
-                size="20px"
+                :class="route.meta.icon"
                 :color="iconColor(route)"
-              />
+                class="text-lg"
+              ></i>
               <VaSidebarItemTitle class="flex justify-between items-center leading-5 font-semibold">
                 {{ t(route.displayName) }}
                 <VaIcon v-if="route.children" :name="arrowDirection(isCollapsed)" size="20px" />
@@ -27,8 +27,9 @@
             </VaSidebarItemContent>
           </VaSidebarItem>
         </template>
-        <template #body>
-          <div v-for="(childRoute, index2) in route.children" :key="index2">
+        <template v-if="vCan.can(route.visible)" #body>
+
+          <div v-for="(childRoute, index2) in route.children"  :key="index2">
             <VaSidebarItem
               :to="{ name: childRoute.name }"
               :active="isActiveChildRoute(childRoute)"
@@ -52,9 +53,14 @@
 <script lang="ts">
 import { defineComponent, watch, ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia';
+
+import { authStore } from '../../stores/auth';
+import { defineAbilitiesFor } from '../../plugins/ability';
 
 import { useI18n } from 'vue-i18n'
 import { useColors } from 'vuestic-ui'
+
 
 import navigationRoutes, { type INavigationRoute } from './NavigationRoutes'
 
@@ -88,6 +94,11 @@ export default defineComponent({
       return section.children.some(({ name }) => route.path.endsWith(`${name}`))
     }
 
+
+    const authStorage = authStore();
+    const { user } = storeToRefs(authStorage);
+    const vCan = defineAbilitiesFor(user?.value);
+
     const setActiveExpand = () =>
       (value.value = navigationRoutes.routes.map((route: INavigationRoute) => routeHasActiveChild(route)))
 
@@ -102,6 +113,7 @@ export default defineComponent({
     watch(() => route.fullPath, setActiveExpand, { immediate: true })
 
     return {
+      vCan,
       writableVisible,
       sidebarWidth,
       value,

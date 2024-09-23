@@ -7,6 +7,7 @@ import { createPinia } from 'pinia'
 import stores from './stores'
 import router from './router'
 import vuesticGlobalConfig from './services/vuestic-ui/global-config'
+import "@fortawesome/fontawesome-free/css/all.css";
 import App from './App.vue'
 
 const app = createApp(App)

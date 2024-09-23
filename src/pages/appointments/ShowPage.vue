@@ -71,11 +71,38 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Loading State -->
-    <div v-else class="text-center mt-6">
-      <p class="text-gray-500">{{ $t('loadingPatientData') }}</p>
+    </div>
+    <div>
+      <!-- Prescriptions Section -->
+      <div  class="mt-8">
+        <div class="flex flex-row items-center mb-4">
+          <div>
+            <h2 class="text-lg lg:text-2xl font-bold text-gray-800">{{ $t('prescriptions') }}</h2>
+          </div>
+          <div v-if="appointmentInfo && appointmentInfo?.status === 'in-progress'" class="ml-4">
+            <button v-if="!appointmentInfo?.prescriptions.length" @click="createPrescription" class="bg-blue-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-blue-600 transition-colors duration-200">Создать рецепт</button>
+            <button v-if="appointmentInfo?.prescriptions.length" @click="updatePrescription" class="bg-green-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-green-600 transition-colors duration-200 ml-4">Редактирования рецепта</button>
+            <button v-if="appointmentInfo?.prescriptions && appointmentInfo?.prescriptions.length > 0" @click="removePrescription" class="ml-4 bg-red-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-red-600 transition-colors duration-200">Удалить</button>
+          </div>
+
+        </div>
+        <ul v-if="appointmentInfo?.prescriptions && appointmentInfo?.prescriptions.length > 0" class="space-y-4">
+          <li v-for="prescription in appointmentInfo?.prescriptions" :key="prescription.id" class="bg-white p-4 rounded-lg shadow-md">
+            <div class="mb-2">
+              <h3 class="font-semibold text-gray-800">{{ $t('prescribingDoctor') }}: {{ prescription.prescribing_doctor }}</h3>
+            </div>
+            <div class="text-gray-600 text-sm">
+              <p><strong>{{ $t('medications') }}:</strong> {{ formatMedications(prescription.medications) }}</p>
+              <p><strong>{{ $t('notes') }}:</strong> {{ prescription.notes || $t('noNotes') }}</p>
+              <p><strong>{{ $t('prescriptionDate') }}:</strong> {{ formatDate(prescription.prescription_date) }}</p>
+            </div>
+          </li>
+        </ul>
+        <div v-else class="text-gray-500 mt-8 bg-white p-4 rounded-lg shadow-md">
+          <p>{{ $t('noPrescriptions') }}</p>
+        </div>
+      </div>
     </div>
 
     <VaModal
@@ -118,7 +145,16 @@
                 />
                 <div class="w-full md:w-12 mt-2 md:mt-0 flex justify-end">
                   <button @click="deleteType(index)" class="cursor-pointer">
-                    <!-- SVG for delete button -->
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <g id="Iconly/Light/Delete">
+                        <g id="Delete">
+                          <path id="Stroke 1" d="M14.4936 7.10107C14.4936 7.10107 14.0863 12.1523 13.8501 14.2801C13.7376 15.2963 13.1098 15.8918 12.0816 15.9106C10.1248 15.9458 8.16584 15.9481 6.20984 15.9068C5.22059 15.8866 4.60334 15.2836 4.49309 14.2853C4.25534 12.1388 3.85034 7.10107 3.85034 7.10107" stroke="#D10F5C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path id="Stroke 3" d="M15.5311 4.67969H2.81262" stroke="#D10F5C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path id="Stroke 5" d="M13.0804 4.67974C12.4917 4.67974 11.9847 4.26349 11.8692 3.68674L11.6869 2.77474C11.5744 2.35399 11.1934 2.06299 10.7592 2.06299H7.58443C7.15018 2.06299 6.76918 2.35399 6.65668 2.77474L6.47443 3.68674C6.35893 4.26349 5.85193 4.67974 5.26318 4.67974" stroke="#D10F5C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </g>
+                      </g>
+                    </svg>
+
                   </button>
                 </div>
               </div>
@@ -137,10 +173,82 @@
           <div class="flex gap-2 flex-col-reverse items-stretch justify-end w-full sm:flex-row sm:items-center">
             <VaButton preset="secondary" color="secondary" @click="$emit('close')">{{ $t('cancel') }}</VaButton>
             <VaButton :disabled="!isValid" @click="onSave">{{ $t('save') }}</VaButton>
+
           </div>
         </div>
       </VaForm>
     </VaModal>
+
+    <VaModal
+      v-slot="{ cancel, ok }"
+      v-model="prescriptionVisible"
+      size="large"
+      mobile-fullscreen
+      close-button
+      hide-default-actions
+      :before-cancel="beforeEditFormModalClose"
+    >
+      <h1>Создания рецепта</h1>
+      <VaForm
+        v-slot="{ isValid }"
+        ref="add-user-form"
+        class="flex-col justify-start items-start gap-4 inline-flex w-full mt-4"
+      >
+        <div class="self-stretch flex-col justify-start items-start gap-4 flex">
+          <!-- Medications Loop -->
+          <div v-for="(item, index) in state.prescriptionData.medications" class="bg-gray-50 w-full p-4 rounded-lg">
+            <div class="w-full">
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="col-span-1">
+                  <VaInput v-model="item.name" placeholder="Name" label="Medication Name" />
+                </div>
+                <div class="col-span-1">
+                  <VaInput v-model="item.dosage" placeholder="Dosage" label="Dosage" />
+                </div>
+                <div class="col-span-1">
+                  <VaInput v-model="item.duration" placeholder="Duration" label="Duration" />
+                </div>
+                <div class="col-span-1">
+                  <VaInput v-model="item.frequency" placeholder="Frequency" label="Frequency" />
+                </div>
+              </div>
+            </div>
+
+            <div class="w-full mt-2 md:mt-4 flex flex-col items-end justify-end">
+              <button v-if="index === 1" @click="deletePrescription(index)" class="bg-red-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-red-600 transition-colors duration-200">
+                Удалить
+              </button>
+            </div>
+            <!-- Encounter Type Section -->
+
+          </div>
+          <div class="flex w-full items-center justify-end">
+            <button
+              @click="addPrescription"
+              class="bg-green-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-green-600 transition-colors duration-200 mt-2"
+            >
+              {{ $t('add') }} +
+            </button>
+          </div>
+          <div class="flex flex-col w-full">
+            <VaInput v-model="state.prescriptionData.prescribing_doctor" placeholder="Full name" label="Doctor" />
+          </div>
+
+          <!-- Reason Section -->
+          <div class="w-full mb-4">
+            <VaTextarea v-model="state.prescriptionData.notes" :label="$t('note')" class="w-full" />
+          </div>
+          <!-- Action Buttons -->
+          <div class="flex gap-2 flex-col-reverse items-stretch justify-end w-full sm:flex-row sm:items-center">
+            <VaButton preset="secondary" color="secondary" @click="$emit('close')">{{ $t('cancel') }}</VaButton>
+            <VaButton v-if="!appointmentInfo.prescriptions.length" :disabled="!isValid" @click="savePrescription">{{ $t('save') }}</VaButton>
+            <VaButton v-else :disabled="!isValid" @click="updatePrescriptionSubmit">{{ $t('update') }}</VaButton>
+
+          </div>
+        </div>
+      </VaForm>
+    </VaModal>
+
   </div>
 </template>
 
@@ -150,15 +258,17 @@ import { useRoute, useRouter } from 'vue-router';
 import moment from 'moment';
 import { appointmentStore } from '../../stores/appointment';
 import { ServicesStore } from '../../stores/services';
+import { prescriptionStore} from '../../stores/prescription'
 import { validators } from '../../services/utils'
 
 const route = useRoute();
-const router = useRouter();
 const appointmentId = route.params.id;
 const appointment = appointmentStore();
+const prescription = prescriptionStore();
 const loading = ref(true);
 const appointmentInfo = ref(null);
 const appointmentVisible = ref(false);
+const prescriptionVisible = ref(false);
 const encounter = ServicesStore();
 
 const getEncounterClasses = computed(() => encounter.getEncounterClasses);
@@ -181,7 +291,20 @@ const state = reactive({
       typesDatas: []
     }
   ],
-  reasonText: ''
+  reasonText: '',
+  prescriptionData: {
+    prescribing_doctor: '',
+    medications: [
+      {
+        name: '',
+        dosage: '',
+        frequency: '',
+        duration: '',
+      }
+    ],
+    notes: '',
+    prescription_date: '',
+  }
 });
 
 
@@ -230,7 +353,22 @@ const formatIdentifiers = (identifiers) => {
 // Format birth date and created at
 const formatDate = (dateStr) => {
   const date = new Date(dateStr);
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  // Set the timezone offset for GMT+5
+  const options = {
+    timeZone: 'Asia/Tashkent', // This is the timezone for GMT+5 (Uzbekistan)
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  };
+
+  return date.toLocaleString('en-GB', options).replace(',', ''); // Format in DD-MM-YYYY HH:mm
+};
+const formatMedications = (medications) => {
+  if (!medications || medications.length === 0) return 'No Medications';
+  return medications.map(med => `${med.name} (${med.dosage}, ${med.frequency}, ${med.duration})`).join(', ');
 };
 
 // Edit Appointment Function
@@ -292,6 +430,54 @@ const onSave = async () => {
 const deleteType = (index) => {
   state.encounterTypesData[0].type.splice(index, 1);
 };
+const createPrescription = () => {
+  prescriptionVisible.value = true;
+  const doctor = JSON.parse(localStorage.getItem('user'));
+  state.prescriptionData.prescribing_doctor = doctor.fullname;
+}
+const updatePrescription = () => {
+  prescriptionVisible.value = true;
+  const doctor = JSON.parse(localStorage.getItem('user'));
+  state.prescriptionData.prescribing_doctor = doctor.fullname;
+  state.prescriptionData.medications = appointmentInfo.value.prescriptions[0].medications;
+  state.prescriptionData.notes = appointmentInfo.value.prescriptions[0].notes;
+}
+const deletePrescription = (index) => {
+  state.prescriptionData.medications.splice(index, 1);
+}
+const addPrescription = () => {
+  state.prescriptionData.medications.push({
+    name: '',
+    dosage: '',
+    frequency: '',
+    duration: '',
+  });
+}
+const removePrescription = async () => {
+  await prescription.DELETE_PRESCRIPTION(appointmentInfo.value.prescriptions[0].id);
+  await fetchDetails();
+}
+const savePrescription = async () => {
+  const payload = {
+    appointment_id: appointmentId,
+    prescribing_doctor: state.prescriptionData.prescribing_doctor,
+    medications: state.prescriptionData.medications,
+    notes: state.prescriptionData.notes,
+  }
+  await prescription.CREATE_PRESCRIPTION(payload);
+  await fetchDetails();
+  prescriptionVisible.value = false;
+}
+const updatePrescriptionSubmit = async () => {
+  const payload = {
+    prescribing_doctor: state.prescriptionData.prescribing_doctor,
+    medications: state.prescriptionData.medications,
+    notes: state.prescriptionData.notes,
+  }
+  await prescription.UPDATE_PRESCRIPTION(appointmentInfo.value.prescriptions[0].id, payload);
+  await fetchDetails();
+  prescriptionVisible.value = false;
+}
 
 </script>
 

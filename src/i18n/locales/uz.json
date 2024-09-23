@@ -214,5 +214,11 @@
   "cancel": "Bekor qilish",
   "save": "Saqlash",
   "loadingPatientData": "Bemor ma'lumotlari yuklanmoqda",
-  "home": "Bosh sahifa"
+  "home": "Bosh sahifa",
+  "prescriptions": "Retseptlar",
+  "medications": "Dorilar",
+  "notes": "Izohlar",
+  "prescriptionDate": "Retsept sanasi",
+  "prescribingDoctor": "Retsept yozgan shifokor",
+  "filter": "Filtr"
 }

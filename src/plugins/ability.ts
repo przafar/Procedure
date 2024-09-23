@@ -47,7 +47,7 @@ export function defineAbilitiesFor(user) {
         can('preferences_index');
         break;
 
-      case 'pediatric_therapeutic_dentistry':
+      case 'DTS':
         can('patients_index');
         can('patients_show');
         can('appointments_index');

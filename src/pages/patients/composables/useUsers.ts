@@ -1,82 +1,117 @@
-import { Ref, ref, unref, watch } from 'vue'
-import { getUsers, updateUser, addUser, removeUser, type Filters, Pagination, Sorting } from '../../../data/pages/users'
-import { patientStore } from '../../../stores/patient';
+import { ref, computed, watch, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { patientStore } from '../../../stores/patient'
+import { Filters, Pagination, User } from '../types'
 
-import { User } from '../types'
-import { watchIgnorable } from '@vueuse/core'
+const makePaginationRef = () => ref<Pagination>({
+  current_page: 1,
+  per_page: 10,
+  total: 0,
+  total_pages: 0,
+})
 
-const makePaginationRef = () => ref<Pagination>({ current_page: 1, per_page: 10, total: 0, total_pages: 0 })
-const makeSortingRef = () => ref<Sorting>({ sortBy: 'fullname', sortingOrder: null })
-const makeFiltersRef = () => ref<Partial<Filters>>({ isActive: true, search: '' })
+const makeFiltersRef = () => ref<Partial<Filters>>({
+  firstname: '',
+  lastname: '',
+  middlename: '',
+  gender: null,
+})
 
 export const useUsers = (options?: {
-  pagination?: Ref<Pagination>
-  sorting?: Ref<Sorting>
-  filters?: Ref<Partial<Filters>>
+  pagination?: ReturnType<typeof makePaginationRef>
+  filters?: ReturnType<typeof makeFiltersRef>
 }) => {
-  const isLoading = ref(false)
-  const users = ref<User[]>([])
-  const store = patientStore()
+  const router = useRouter()    // Router instance for manipulating routes
+  const route = useRoute()      // Route instance to access current route params
 
-  const { filters = makeFiltersRef(), sorting = makeSortingRef(), pagination = makePaginationRef() } = options || {}
+  const isLoading = ref(false)  // Loading state
+  const users = ref<User[]>([]) // Holds the fetched users
+  const store = patientStore()  // Vuex store for handling data fetching
 
-  const fetch = async () => {
-    isLoading.value = true
-    const { data } = await store.GET_LIST_OF_PATIENTS().then((e) => {
-      console.log(e, 'data')
-      return e
-    })
-    users.value = data.data
-    ignoreUpdates(() => {
-      pagination.value = data.pagination
-    })
+  const { filters = makeFiltersRef(), pagination = makePaginationRef() } = options || {}
 
-    isLoading.value = false
+  const initializeFromQuery = () => {
+    const queryParams = route.query
+
+    pagination.value.current_page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1
+    pagination.value.per_page = queryParams.per_page ? parseInt(queryParams.per_page as string, 10) : 10
+
+    // Apply query parameters to filters (firstname, lastname, middlename, gender)
+    filters.value.firstname = queryParams.firstname ? queryParams.firstname as string : ''
+    filters.value.lastname = queryParams.lastname ? queryParams.lastname as string : ''
+    filters.value.middlename = queryParams.middlename ? queryParams.middlename as string : ''
+    filters.value.gender = queryParams.gender ? queryParams.gender as string : null
   }
 
-  const { ignoreUpdates } = watchIgnorable([pagination, sorting], fetch, { deep: true })
+  const fetch = async () => {
+    const params = {
+      page: pagination.value.current_page,
+      per_page: pagination.value.per_page,
+      firstname: filters.value.firstname, // firstname filter
+      lastname: filters.value.lastname, // lastname filter
+      middlename: filters.value.middlename, // middlename filter
+      gender: filters.value.gender, // gender filter
+    }
 
-  watch(
-    filters,
-    () => {
-      // Reset pagination to first page when filters changed
-      pagination.value.page = 1
-      fetch()
-    },
-    { deep: true },
-  )
+    isLoading.value = true
 
-  fetch()
+    try {
+      router.push({ path: route.path, query: params })
+
+      const { data } = await store.GET_LIST_OF_PATIENTS(params)
+      users.value = data.data
+
+      pagination.value.total = data.pagination.total
+      pagination.value.total_pages = data.pagination.total_pages
+    } catch (error) {
+      console.error('Error fetching users:', error)
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  onMounted(() => {
+    initializeFromQuery()
+    fetch()
+  })
+
+  watch([filters, pagination], fetch, { deep: true })
 
   return {
     isLoading,
-
     filters,
-    sorting,
     pagination,
-
     users,
-
     fetch,
 
     async add(user: User) {
       isLoading.value = true
-      await addUser(user)
-      await fetch()
-      isLoading.value = false
+      try {
+        await store.ADD_USER(user)
+        await fetch()
+      } finally {
+        isLoading.value = false
+      }
     },
 
     async update(user: User) {
       isLoading.value = true
-      await fetch()
-      isLoading.value = false
+      try {
+        await store.UPDATE_USER(user)
+        await fetch()
+      } finally {
+        isLoading.value = false
+      }
     },
 
     async remove(user: User) {
       isLoading.value = true
-      await removeUser(user)
-      await fetch()
-      isLoading.value = false
+      try {
+        await store.REMOVE_USER(user)
+        await fetch()
+      } finally {
+        isLoading.value = false
+      }
     },
   }
 }

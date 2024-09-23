@@ -13,52 +13,59 @@ export default {
   routes: [
     {
       name: 'dashboard',
+      visible: 'dashboard_index',
       displayName: 'menu.dashboard',
       meta: {
-        icon: 'vuestic-iconset-dashboard',
+        icon: 'fa-solid fa-chart-line',
       },
     },
     {
       name: 'services',
       displayName: 'menu.services',
+      visible: 'services_index',
       meta: {
-        icon: 'vuestic-iconset-files',
+        icon: 'fa-solid fa-list',
       },
     },
     {
       name: 'users',
+      visible: 'practitioner_index',
       displayName: 'menu.users',
       meta: {
-        icon: 'group',
+        icon: 'fa-solid fa-user-group',
       },
     },
     {
       name: 'patients',
+      visible: 'patients_index',
       displayName: 'menu.patients',
       meta: {
-        icon: 'group',
+        icon: 'fa-solid fa-user-plus',
       },
     },
 
     {
       name: 'appointments',
+      visible: 'appointments_index',
       displayName: 'menu.appointments',
       meta: {
-        icon: 'vuestic-iconset-files',
+        icon: 'fa-regular fa-calendar-check',
       },
     },
     {
       name: 'projects',
+      visible: 'dashboard_index',
       displayName: 'menu.projects',
       meta: {
-        icon: 'folder_shared',
+        icon: 'fa-solid fa-user-shield',
       },
     },
     {
       name: 'auth',
+      visible: 'dashboard_index',
       displayName: 'menu.auth',
       meta: {
-        icon: 'login',
+        icon: 'fa-solid fa-arrow-right-to-bracket',
       },
       children: [
         {
@@ -79,16 +86,18 @@ export default {
 
     {
       name: 'preferences',
+      visible: 'dashboard_index',
       displayName: 'menu.preferences',
       meta: {
-        icon: 'manage_accounts',
+        icon: 'fa-solid fa-user-gear',
       },
     },
     {
       name: 'settings',
+      visible: 'dashboard_index',
       displayName: 'menu.settings',
       meta: {
-        icon: 'settings',
+        icon: 'fa-solid fa-gear',
       },
     },
   ] as INavigationRoute[],

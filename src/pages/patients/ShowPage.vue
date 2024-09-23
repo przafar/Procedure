@@ -73,6 +73,9 @@
         <div class="p-5" v-else>
           <p class="text-gray-500">{{ $t('noAppointments') }}</p>
         </div>
+
+
+
       </div>
     </div>
 
@@ -141,7 +144,7 @@ const state = reactive({
     type: '',
     text: ''
   },
-  appointments: []
+  appointments: [],
 });
 
 watch(() => state.newAppointment.role, async (newRoleCode) => {

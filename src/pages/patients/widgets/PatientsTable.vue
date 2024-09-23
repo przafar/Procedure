@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineVaDataTableColumns, useModal } from 'vuestic-ui'
 import { User, UserRole } from '../types'
-import { PropType, computed, toRef } from 'vue'
+import { PropType, computed, toRef, ref } from 'vue'
 import { Pagination, Sorting } from '../../../data/pages/users'
 import { useVModel } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
@@ -48,6 +48,7 @@ const roleColors: Record<UserRole, string> = {
 const totalPages = computed(() => Math.ceil(props.pagination.total / props.pagination.perPage))
 
 const { confirm } = useModal()
+const test = ref(5)
 
 const onUserDelete = async (user: User) => {
   const agreed = await confirm({
@@ -64,33 +65,26 @@ const onUserDelete = async (user: User) => {
   }
 }
 
-const formatIdentifiers = (identifiers: Identifier[] | null | undefined) => {
-  identifiers = identifiers || []
+const formatIdentifiers = (identifiers) => {
+  identifiers = Array.isArray(identifiers) ? identifiers : [];
 
   if (identifiers.length === 0) {
-    return t('noDocument')
+    return t('noDocument');
   }
 
   if (identifiers.length <= 2) {
-    return identifiers.map((item) => item.value).join(', ')
+    return identifiers.map(item => item.value).join(', ');
   }
 
   return (
-    identifiers
-      .slice(0, 2)
-      .map((item) => item)
-      .join(', ') +
-    ' + ' +
-    (identifiers.length - 2) +
-    t(' more')
-  )
-}
+    identifiers.slice(0, 2).map(item => item.value).join(', ') + ' + ' + (identifiers.length - 2) + t(' more')
+  );
+};
+
 </script>
 
 <template>
   <VaDataTable
-    v-model:sort-by="sortByVModel"
-    v-model:sorting-order="sortingOrderVModel"
     :columns="columns"
     :items="users"
     :loading="$props.loading"
@@ -101,16 +95,6 @@ const formatIdentifiers = (identifiers: Identifier[] | null | undefined) => {
       </div>
     </template>
 
-    <template #cell(username)="{ rowData }">
-      <div class="max-w-[120px] ellipsis">
-        {{ rowData.username }}
-      </div>
-    </template>
-
-    <template #cell(role)="{ rowData }">
-      <VaBadge :text="rowData.role" :color="roleColors[rowData.role as UserRole]" />
-    </template>
-
     <template #cell(identifier)="{ rowData }">
       <div class="ellipsis max-w-[300px] lg:max-w-[450px]">
         {{ formatIdentifiers(rowData.identifier) }}
@@ -119,15 +103,6 @@ const formatIdentifiers = (identifiers: Identifier[] | null | undefined) => {
 
     <template #cell(actions)="{ rowData }">
       <div class="flex gap-2 justify-end">
-        <RouterLink :to="{ name: 'patient-show', params: { id: rowData.id } }">
-          <VaButton
-            preset="primary"
-            size="small"
-            icon="mso-visibility"
-            aria-label="Edit user"
-            @click="$emit('edit-user', rowData)"
-          />
-        </RouterLink>
         <VaButton
           preset="primary"
           size="small"
@@ -140,46 +115,55 @@ const formatIdentifiers = (identifiers: Identifier[] | null | undefined) => {
           size="small"
           icon="mso-delete"
           color="danger"
-          disabled
-          aria-label="Delete user"
           @click="onUserDelete(rowData as User)"
         />
       </div>
     </template>
   </VaDataTable>
-  <div class="flex flex-col-reverse md:flex-row gap-2 justify-between items-center py-2">
-    <div>
-      <b> {{ $props.pagination.total }} Jami soni.</b>
-      <VaSelect v-model="$props.pagination.per_page" class="!w-20" :options="[10, 50, 100]" />
-    </div>
 
-    <!-- <div v-if="totalPages > 1" class="flex">
+  <div class="pagination-container mt-4">
+    <div class="pagination-controls">
       <VaButton
         preset="secondary"
         icon="va-arrow-left"
-        aria-label="Oldingi sahifa"
-        :disabled="$props?.pagination.page === 1"
-        @click="$props.pagination.page--"
+        aria-label="Previous Page"
+        class="rounded"
+        rounded
+        gapped
+        :disabled="pagination.current_page === 1"
+        @click="$emit('update:current_page', pagination.current_page - 1)"
       />
+
+      <VaPagination
+        v-model:modelValue="pagination.current_page"
+        :pages="pagination.total_pages"
+        :visible-pages="pagination.total_pages"
+        @update:modelValue="$emit('update:current_page', pagination.current_page)"
+        active-page-color="#154EC1"
+        buttons-preset="secondary"
+      >
+
+      </VaPagination>
+
       <VaButton
-        class="mr-2"
         preset="secondary"
         icon="va-arrow-right"
-        aria-label="Keyingi sahifa"
-        :disabled="$props?.pagination.page === totalPages"
-        @click="$props.pagination.page++"
-      />
-      <VaPagination
-        v-model="$props?.pagination.page"
+        aria-label="Next Page"
         buttons-preset="secondary"
-        :pages="totalPages"
-        :visible-pages="5"
-        :boundary-links="false"
-        :direction-links="false"
+        rounded
+        gapped
+        :disabled="pagination.current_page === pagination.total_pages"
+        @click="$emit('update:current_page', pagination.current_page + 1)"
       />
-    </div> -->
+    </div>
+
+    <div class="total-count">
+      <span>Общее количество: {{ pagination.total }}</span>
+    </div>
   </div>
 </template>
+
+
 
 <style lang="scss" scoped>
 .va-data-table {
@@ -187,4 +171,60 @@ const formatIdentifiers = (identifiers: Identifier[] | null | undefined) => {
     border-bottom: 1px solid var(--va-background-border);
   }
 }
+.va-pagination__item--active {
+  background-color: #007bff;  /* Меняем цвет активной страницы */
+  color: white;
+  font-weight: bold;
+}
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap; /* Адаптируется для мобильных устройств */
+}
+
+.pagination-controls {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.total-count {
+  font-weight: 500;
+  color: #4a4a4a;
+  text-align: right;
+}
+
+/* Для мобильных устройств */
+@media (max-width: 768px) {
+  .pagination-container {
+    flex-direction: row; /* Перестраиваем в колонку на маленьких экранах */
+    align-items: center;
+  }
+
+  .pagination-controls {
+    justify-content: center;
+    gap: 0;
+  }
+
+  .total-count {
+    margin-top: 0.5rem;
+    text-align: center; /* Центрируем текст на маленьких экранах */
+  }
+
+  /* Стили для кнопок и других элементов */
+  .va-button {
+    font-size: 14px;
+    padding: 0.25rem 0.5rem; /* Уменьшаем кнопки для мобильных */
+  }
+
+  .va-pagination {
+    font-size: 14px; /* Уменьшаем размер текста в пагинации */
+  }
+  .active-page {
+    background: red !important;
+  }
+}
+
 </style>

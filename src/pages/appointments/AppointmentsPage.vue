@@ -5,6 +5,7 @@ import EditUserForm from './widgets/EditUserForm.vue'
 import { User } from './types'
 import { useUsers } from './composables/useUsers'
 import { useModal, useToast } from 'vuestic-ui'
+import PatientsTable from '../patients/widgets/PatientsTable.vue'
 
 const doShowEditUserModal = ref(false)
 
@@ -88,11 +89,10 @@ const beforeEditFormModalClose = async (hide: () => unknown) => {
       </div>
 
       <AppointmentsTable
-        v-model:sort-by="sorting.sortBy"
-        v-model:sorting-order="sorting.sortingOrder"
         :users="users"
         :loading="isLoading"
         :pagination="pagination"
+        @update:current_page="pagination.current_page = $event; fetchUsers()"
         @editUser="showEditUserModal"
         @deleteUser="onUserDelete"
       />

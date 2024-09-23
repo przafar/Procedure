@@ -145,7 +145,7 @@
   "helpAndSupport": "Помощь и поддержка",
   "aboutVuesticAdmin": "О Vuestic Admin",
   "search": {
-    "placeholder": "Поиск..."
+    "placeholder": "Поиск"
   },
   "services": "Сервисы",
   "addService": "Добавить сервис",
@@ -214,5 +214,11 @@
   "cancel": "Отмена",
   "save": "Сохранить",
   "loadingPatientData": "Загрузка данных пациента",
-  "home": "Главная"
+  "home": "Главная",
+  "prescriptions": "Рецепты",
+  "medications": "Лекарства",
+  "notes": "Заметки",
+  "prescriptionDate": "Дата выписки",
+  "prescribingDoctor": "Лечащий врач",
+  "filter": "Фильтр"
 }

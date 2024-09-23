@@ -6,7 +6,7 @@ import { Pagination, Sorting } from '../../../data/pages/users'
 import { useVModel } from '@vueuse/core'
 
 const columns = defineVaDataTableColumns([
-  { label: 'Qabul vaqti', key: 'id', sortable: false },
+  { label: 'Qabul vaqti', key: 'created_at', sortable: false },
   { label: 'F.I.O', key: 'patient.full_name', sortable: true },
   { label: 'Yo`nalishi', key: 'encounter_class.display', sortable: true },
   { label: 'Turi', key: 'encounter_type.display', sortable: true },
@@ -61,6 +61,21 @@ const onUserDelete = async (user: User) => {
     emit('delete-user', user)
   }
 }
+const formatDate = (dateStr) => {
+  const date = new Date(dateStr);
+  // Set the timezone offset for GMT+5
+  const options = {
+    timeZone: 'Asia/Tashkent', // This is the timezone for GMT+5 (Uzbekistan)
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  };
+
+  return date.toLocaleString('en-GB', options).replace(',', ''); // Format in DD-MM-YYYY HH:mm
+};
 
 const formatIdentifiers = (identifiers: Identifier[] | null | undefined) => {
   identifiers = identifiers || [];
@@ -93,9 +108,9 @@ const formatIdentifiers = (identifiers: Identifier[] | null | undefined) => {
     :items="users"
     :loading="$props.loading"
   >
-    <template #cell(fullname)="{ rowData }">
+    <template #cell(created_at)="{ rowData }">
       <div class="flex items-center gap-2 max-w-[230px] ellipsis">
-        {{ rowData.id }}
+        {{ formatDate(rowData.created_at) }}
       </div>
     </template>
 
@@ -147,36 +162,44 @@ const formatIdentifiers = (identifiers: Identifier[] | null | undefined) => {
     </template>
   </VaDataTable>
 
-  <div class="flex flex-col-reverse md:flex-row gap-2 justify-between items-center py-2">
-    <div>
-      <b> {{ $props.pagination.total }} Jami soni.</b>
-      <VaSelect v-model="$props.pagination.per_page" class="!w-20" :options="[10, 50, 100]" />
-    </div>
-
-    <!-- Pagination Controls (Optional) -->
-    <div v-if="totalPages > 1" class="flex">
+  <div class="pagination-container mt-4">
+    <div class="pagination-controls">
       <VaButton
         preset="secondary"
         icon="va-arrow-left"
-        aria-label="Previous page"
-        :disabled="$props.pagination.page === 1"
-        @click="$props.pagination.page--"
+        aria-label="Previous Page"
+        class="rounded"
+        rounded
+        gapped
+        :disabled="pagination.current_page === 1"
+        @click="$emit('update:current_page', pagination.current_page - 1)"
       />
+
+      <VaPagination
+        v-model:modelValue="pagination.current_page"
+        :pages="pagination.total_pages"
+        :visible-pages="pagination.total_pages"
+        @update:modelValue="$emit('update:current_page', pagination.current_page)"
+        active-page-color="#154EC1"
+        buttons-preset="secondary"
+      >
+
+      </VaPagination>
+
       <VaButton
         preset="secondary"
         icon="va-arrow-right"
-        aria-label="Next page"
-        :disabled="$props.pagination.page === totalPages"
-        @click="$props.pagination.page++"
-      />
-      <VaPagination
-        v-model="$props.pagination.page"
+        aria-label="Next Page"
         buttons-preset="secondary"
-        :pages="totalPages"
-        :visible-pages="5"
-        :boundary-links="false"
-        :direction-links="false"
+        rounded
+        gapped
+        :disabled="pagination.current_page === pagination.total_pages"
+        @click="$emit('update:current_page', pagination.current_page + 1)"
       />
+    </div>
+
+    <div class="total-count">
+      <span>Общее количество: {{ pagination.total }}</span>
     </div>
   </div>
 </template>
@@ -188,4 +211,60 @@ const formatIdentifiers = (identifiers: Identifier[] | null | undefined) => {
     border-bottom: 1px solid var(--va-background-border);
   }
 }
+.va-pagination__item--active {
+  background-color: #007bff;  /* Меняем цвет активной страницы */
+  color: white;
+  font-weight: bold;
+}
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap; /* Адаптируется для мобильных устройств */
+}
+
+.pagination-controls {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.total-count {
+  font-weight: 500;
+  color: #4a4a4a;
+  text-align: right;
+}
+
+/* Для мобильных устройств */
+@media (max-width: 768px) {
+  .pagination-container {
+    flex-direction: row; /* Перестраиваем в колонку на маленьких экранах */
+    align-items: center;
+  }
+
+  .pagination-controls {
+    justify-content: center;
+    gap: 0;
+  }
+
+  .total-count {
+    margin-top: 0.5rem;
+    text-align: center; /* Центрируем текст на маленьких экранах */
+  }
+
+  /* Стили для кнопок и других элементов */
+  .va-button {
+    font-size: 14px;
+    padding: 0.25rem 0.5rem; /* Уменьшаем кнопки для мобильных */
+  }
+
+  .va-pagination {
+    font-size: 14px; /* Уменьшаем размер текста в пагинации */
+  }
+  .active-page {
+    background: red !important;
+  }
+}
+
 </style>

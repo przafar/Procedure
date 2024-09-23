@@ -3,7 +3,7 @@
   "private": true,
   "version": "3.1.0",
   "scripts": {
-    "build": "node --max-old-space-size=4096 vite build",
+    "build": "vite build",
     "dev": "vite",
     "preview": "vite preview"
   },

@@ -78,12 +78,17 @@ const onSave = async () => {
         if (response.status === 200) {
           const data = await response.data
           emit('save', data)
+          encounterTypesVisible.value = false
         } else {
           console.error('Failed to save user data:', response)
+          encounterTypesVisible.value = false
+          
         }
       })
     } catch (error) {
       console.error('Error during request:', error)
+      encounterTypesVisible.value = false
+
     }
   }
 }

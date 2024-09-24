@@ -8,7 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-#dist  # Добавлено
+dist
 dist-ssr
 *.local
 
@@ -23,7 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 .env
+pnpm-lock.yaml
 
-# Local Netlify folder
-.netlify
-netlify.toml
+jsconfig.json 

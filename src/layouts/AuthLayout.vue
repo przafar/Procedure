@@ -7,7 +7,7 @@
         to="/"
         aria-label="Visit homepage"
       >
-        <VuesticLogo :height="28" start="#FFF" />
+        <h2 class="text-white text-2xl font-bold">DENTA LOR</h2>
       </RouterLink>
     </template>
     <template #content>

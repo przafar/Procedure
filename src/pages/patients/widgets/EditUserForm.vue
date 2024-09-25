@@ -6,7 +6,6 @@ import { patientStore } from '../../../stores/patient'
 import { validators } from '../../../services/utils'
 import moment from 'moment'
 
-
 const props = defineProps({
   user: {
     type: Object as PropType<User | null>,
@@ -133,7 +132,18 @@ const roleSelectOptions: { text: Capitalize<UserRole>; value: UserRole }[] = [
   { text: 'Ayol', value: 'female' },
 ]
 
+const requiredLabel = (label: string) => {
+  return `${label} *`
+}
+const ppnValidator = (value: string) => {
+  if (!value || value.length !== 8) {
+    return 'PPN должен состоять из 8 символов'
+  }
+  return true
+}
+
 </script>
+
 
 
 <template>
@@ -142,47 +152,80 @@ const roleSelectOptions: { text: Capitalize<UserRole>; value: UserRole }[] = [
       <div class="flex gap-4 flex-col sm:flex-row w-full">
         <VaInput
           v-model="newUser.lastname"
-          :label="$t('lastname')"
           class="w-full sm:w-1/2"
           :rules="[validators.required]"
           name="lastname"
-        />
+        >
+          <template #label>
+            <span>{{ $t('lastname') }}</span><span class="ml-1 text-red-500">*</span>
+          </template>
+        </VaInput>
         <VaInput
           v-model="newUser.firstname"
-          :label="$t('firstname')"
           class="w-full sm:w-1/2"
           :rules="[validators.required]"
           name="firstname"
-        />
-        <VaInput v-model="newUser.middlename" :label="$t('middlename')" class="w-full sm:w-1/2" name="middlename" />
+        >
+          <template #label>
+            <span>{{ $t('firstname') }}</span><span class="ml-1 text-red-500">*</span>
+          </template>
+        </VaInput>
+        <VaInput v-model="newUser.middlename" :rules="[validators.required]" class="w-full sm:w-1/2" name="middlename">
+          <template #label>
+            <span>{{ $t('middlename') }}</span><span class="ml-1 text-red-500">*</span>
+          </template>
+        </VaInput>
       </div>
       <div class="flex gap-4 flex-col sm:flex-row w-full">
-        <VaInput v-model="newUser.nnuzb" :label="$t('pinfl')" class="w-full sm:w-1/2" name="nnuzb" />
-        <VaInput v-model="newUser.ppn" :label="$t('passport')" class="w-full sm:w-1/2" name="ppn" />
+        <VaInput v-model="newUser.nnuzb" class="w-full sm:w-1/2" name="nnuzb">
+          <template #label>
+            <span>{{ $t('pinfl') }}</span>
+          </template>
+        </VaInput>
+
+        <VaInput v-model="newUser.ppn" :rules="[validators.required, ppnValidator]" class="w-full sm:w-1/2" name="ppn">
+          <template #label>
+            <span>{{ $t('passport') }}</span><span class="ml-1 text-red-500">*</span>
+          </template>
+        </VaInput>
       </div>
 
       <div class="flex gap-4 w-full">
         <div class="w-1/2">
           <VaSelect
             v-model="newUser.gender"
-            :label="$t('gender')"
             class="w-full"
             :options="roleSelectOptions"
             :rules="[validators.required]"
             name="gender"
             value-by="value"
-          />
+          >
+            <template #label>
+              <span>{{ $t('gender') }}</span><span class="ml-1 text-red-500">*</span>
+            </template>
+          </VaSelect>
         </div>
         <VaDateInput
           v-model="newUser.birthdate"
-          :label="$t('birthDate')"
+          :rules="[validators.required]"
           class="w-full"
           name="birthdate"
           manual-input
-        />
+        >
+          <template #label>
+            <span>{{ $t('birthDate') }}</span><span class="ml-1 text-red-500">*</span>
+          </template>
+        </VaDateInput>
+
+
+
       </div>
 
-      <VaInput v-model="newUser.phone" :label="$t('phoneNumber')" class="w-full sm:w-1/2" name="phone" />
+      <VaInput v-model="newUser.phone" :rules="[validators.required]" class="w-full sm:w-1/2" name="phone">
+        <template #label>
+          <span>{{ $t('phoneNumber') }}</span><span class="ml-1 text-red-500">*</span>
+        </template>
+      </VaInput>
       <div class="flex gap-2 flex-col-reverse items-stretch justify-end w-full sm:flex-row sm:items-center">
         <VaButton preset="secondary" color="secondary" @click="$emit('close')">{{ $t('cancel') }}</VaButton>
         <VaButton :disabled="!isValid" @click="onSave">{{ saveButtonLabel }}</VaButton>
@@ -190,4 +233,8 @@ const roleSelectOptions: { text: Capitalize<UserRole>; value: UserRole }[] = [
     </div>
   </VaForm>
 </template>
-
+<style scoped>
+.red-star {
+  color: red;
+}
+</style>

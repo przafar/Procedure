@@ -103,6 +103,15 @@ const formatIdentifiers = (identifiers) => {
 
     <template #cell(actions)="{ rowData }">
       <div class="flex gap-2 justify-end">
+        <router-link :to="{ name: 'patient-show', params: { id: rowData.id } }">
+          <VaButton
+            preset="primary"
+            size="small"
+            icon="mso-visibility"
+            aria-label="Edit user"
+            @click="$emit('edit-user', rowData)"
+          />
+        </router-link>
         <VaButton
           preset="primary"
           size="small"

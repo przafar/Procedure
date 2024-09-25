@@ -100,7 +100,7 @@
             <VaSelect
               v-model="state.newAppointment.role"
               class="w-full"
-              :rules="[validators.required, isEmptyValidator]"
+              :rules="[validators.required]"
               :options="getEncounterClasses"
               text-by="display"
               value-by="code"

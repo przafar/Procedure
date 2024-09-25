@@ -79,7 +79,7 @@ const beforeEditFormModalClose = async (hide: () => unknown) => {
     <VaCardContent>
       <div class="flex flex-col md:flex-row gap-2 mb-2 justify-between">
         <div class="flex flex-col md:flex-row gap-2 justify-start">
-          <VaInput v-model="filters.search" :placeholder="$t('search')">
+          <VaInput v-model="filters.search" disabled :placeholder="$t('search')">
             <template #prependInner>
               <VaIcon name="search" color="secondary" size="small" />
             </template>

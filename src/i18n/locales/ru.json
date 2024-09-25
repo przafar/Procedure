@@ -223,5 +223,13 @@
   "medicationName": "Название лекарства",
   "dosage": "Дозировка",
   "duration": "Продолжительность",
-  "frequency": "Частота"
+  "frequency": "Частота",
+  "createPrescription": "Создания рецепта",
+  "editPrescription": "Редактирование рецепта",
+  "delete": "Удалить",
+  "noPrescriptions": "Рецепты не найдены",
+  "in-progress": "В процессе",
+  "finished": "Завершено",
+  "draft": "Черновик",
+  "entered-in-error": "Введено с ошибкой",
 }

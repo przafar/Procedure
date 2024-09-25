@@ -61,7 +61,7 @@
                 {{ $t(item.status) }}
               </span>
               <router-link :to="{ name: 'appointment-show', params: { id: item.id } }" class="block">
-                <h4 class="font-bold text-gray-700">{{ $t('appointment') }} #{{ index + 1 }}</h4>
+                <h4 class="font-bold text-blue-600 hover:text-blue-700">{{ $t('appointment') }} #{{ index + 1 }}</h4>
               </router-link>
               <p class="text-gray-600">{{ $t('createdAt') }}: {{ formatData(item.created_at) }}</p>
               <p class="text-gray-600">{{ $t('direction') }}: <b>{{ item.encounter_class.code }}</b> {{ item.encounter_class.display }}</p>

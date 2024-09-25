@@ -109,7 +109,6 @@ const formatIdentifiers = (identifiers) => {
             size="small"
             icon="mso-visibility"
             aria-label="Edit user"
-            @click="$emit('edit-user', rowData)"
           />
         </router-link>
         <VaButton

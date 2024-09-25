@@ -223,5 +223,13 @@
   "medicationName": "Dori nomi",
   "dosage": "Dozasi",
   "duration": "Davomiyligi",
-  "frequency": "Qabul qilish tez-tezligi"
+  "frequency": "Qabul qilish tez-tezligi",
+  "createPrescription": "Retsept yaratish",
+  "editPrescription": "Retseptni tahrirlash",
+  "delete": "O'chirish",
+  "noPrescriptions": "Retseptlar topilmadi",
+  "in-progress": "Jarayonda",
+  "finished": "Yakunlandi",
+  "draft": "Loyihada",
+  "entered-in-error": "Xato kiritilgan"
 }

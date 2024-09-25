@@ -435,6 +435,7 @@ const onSave = async () => {
   console.log(payload, 'payload');
   await appointment.UPDATE(appointmentId, payload);
   await fetchDetails();
+  appointmentVisible.value = false;
 };
 const deleteType = (index) => {
   state.encounterTypesData[0].type.splice(index, 1);

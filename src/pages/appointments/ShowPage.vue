@@ -200,16 +200,16 @@
             <div class="w-full">
               <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="col-span-1">
-                  <VaInput v-model="item.name" placeholder="Name" label="Medication Name" />
+                  <VaInput v-model="item.name" :placeholder="$t('medicationName')" :label="$t('medicationName')" />
                 </div>
                 <div class="col-span-1">
-                  <VaInput v-model="item.dosage" placeholder="Dosage" label="Dosage" />
+                  <VaInput v-model="item.dosage" :placeholder="$t('dosage')" :label="$t('dosage')" />
                 </div>
                 <div class="col-span-1">
-                  <VaInput v-model="item.duration" placeholder="Duration" label="Duration" />
+                  <VaInput v-model="item.duration" :placeholder="$t('duration')" :label="$t('duration')" />
                 </div>
                 <div class="col-span-1">
-                  <VaInput v-model="item.frequency" placeholder="Frequency" label="Frequency" />
+                  <VaInput v-model="item.frequency" :placeholder="$t('frequency')" :label="$t('frequency')" />
                 </div>
               </div>
             </div>
@@ -231,7 +231,7 @@
             </button>
           </div>
           <div class="flex flex-col w-full">
-            <VaInput v-model="state.prescriptionData.prescribing_doctor" placeholder="Full name" label="Doctor" />
+            <VaInput v-model="state.prescriptionData.prescribing_doctor" :placeholder="$t('fullName')" :label="$t('prescribingDoctor')" />
           </div>
 
           <!-- Reason Section -->

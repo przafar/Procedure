@@ -95,22 +95,28 @@
     >
       <h1>{{ $t('createAppointment') }}</h1>
       <div class="flex flex-col gap-4 w-full mt-4">
-        <div class="w-full">
-          <VaSelect
-            v-model="state.newAppointment.role"
-            :label="$t('selectDirection')"
-            class="w-full"
-            :options="getEncounterClasses"
-            text-by="display"
-            value-by="code"
-          />
-        </div>
-        <div class="w-full">
-          <VaTextarea :label="$t('note')" v-model="state.newAppointment.text" class="w-full" />
-        </div>
-        <div class="w-full flex justify-end">
-          <VaButton @click="onSave">{{ $t('create') }}</VaButton>
-        </div>
+        <VaForm v-slot="{ isValid }" ref="add-appointment-form" class="flex-col justify-start items-start gap-4 inline-flex w-full">
+          <div class="w-full">
+            <VaSelect
+              v-model="state.newAppointment.role"
+              class="w-full"
+              :rules="[validators.required, isEmptyValidator]"
+              :options="getEncounterClasses"
+              text-by="display"
+              value-by="code"
+            >
+              <template #label>
+                <span>{{ $t('selectDirection') }}</span><span class="ml-1 text-red-500">*</span>
+              </template>
+            </VaSelect>
+          </div>
+          <div class="w-full">
+            <VaTextarea :label="$t('note')" v-model="state.newAppointment.text" class="w-full" />
+          </div>
+          <div class="w-full flex justify-end">
+            <VaButton :disabled="!isValid" @click="onSave">{{ $t('create') }}</VaButton>
+          </div>
+        </VaForm>
       </div>
     </VaModal>
   </div>
@@ -124,6 +130,8 @@ import moment from 'moment';
 import { patientStore } from '../../stores/patient';
 import { ServicesStore } from '../../stores/services';
 import { appointmentStore } from '../../stores/appointment';
+import { validators } from '../../services/utils'
+import { useForm } from 'vuestic-ui'
 
 const route = useRoute();
 const patientId = route.params.id;
@@ -140,12 +148,13 @@ const getEncounterTypes = computed(() => encounter.getEncounterTypes);
 
 const state = reactive({
   newAppointment: {
-    role: '',
+    role: null,
     type: '',
     text: ''
   },
   appointments: [],
 });
+const form = useForm('add-appointment-form')
 
 watch(() => state.newAppointment.role, async (newRoleCode) => {
   if (newRoleCode) {
@@ -218,19 +227,27 @@ const statusClass = (status) => {
 };
 
 const onSave = async () => {
-  const payload = {
-    patient_id: patientId,
-    encounter_class: state.newAppointment.role,
-    reason_text: state.newAppointment.text
-  };
-  await appointment.CREATE_APPOINTMENT(payload);
-  await fetchDetails();
-  appointmentVisible.value = false;
+  if (form.validate()) {
+    const payload = {
+      patient_id: patientId,
+      encounter_class: state.newAppointment.role,
+      reason_text: state.newAppointment.text
+    };
+    await appointment.CREATE_APPOINTMENT(payload);
+    await fetchDetails();
+    appointmentVisible.value = false;
+  }
 };
 
 onMounted(async () => {
   await fetchDetails();
 });
+const isEmptyValidator = (value: string) => {
+  if (!value || value.length !== 1) {
+    return 'Поле не должно быть пустым'
+  }
+  return true
+}
 </script>
 
 <style scoped>

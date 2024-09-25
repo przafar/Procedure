@@ -158,7 +158,6 @@
   "addPatient": "Добавить пациента",
   "edit": "Редактировать",
   "addNewPatient": "Добавить нового пациента",
-  "fullName": "Ф.И.О.",
   "identityDocument": "Документ, удостоверяющий личность",
   "birthYear": "Год рождения",
   "phoneNumber": "Номер телефона",
@@ -220,5 +219,9 @@
   "notes": "Заметки",
   "prescriptionDate": "Дата выписки",
   "prescribingDoctor": "Лечащий врач",
-  "filter": "Фильтр"
+  "filter": "Фильтр",
+  "medicationName": "Название лекарства",
+  "dosage": "Дозировка",
+  "duration": "Продолжительность",
+  "frequency": "Частота"
 }

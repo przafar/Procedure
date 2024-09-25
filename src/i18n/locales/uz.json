@@ -196,7 +196,6 @@
   "cancel": "Bekor qilish",
   "patientInfo": "Bemor haqida ma'lumot",
   "patientId": "Bemorning ID",
-  "fullName": "To'liq ismi",
   "passport": "Pasport seriya va raqami",
   "phoneNumber": "Telefon raqami",
   "noPhoneNumber": "Telefon raqami yo'q",
@@ -220,5 +219,9 @@
   "notes": "Izohlar",
   "prescriptionDate": "Retsept sanasi",
   "prescribingDoctor": "Retsept yozgan shifokor",
-  "filter": "Filtr"
+  "filter": "Filtr",
+  "medicationName": "Dori nomi",
+  "dosage": "Dozasi",
+  "duration": "Davomiyligi",
+  "frequency": "Qabul qilish tez-tezligi"
 }

@@ -12,7 +12,9 @@
           />
         </Transition>
         <RouterLink to="/" aria-label="Visit home page">
-          Med clinic
+          <div class="flex flex-row items-center">
+            <img class="w-10" src="./dentalor-min.png" alt=""> <span class="ml-2 text-2xl font-bold text-[#282c81]">Med clinic</span>
+          </div>
         </RouterLink>
       </div>
     </template>

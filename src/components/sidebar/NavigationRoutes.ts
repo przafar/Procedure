@@ -27,14 +27,14 @@ export default {
         icon: 'fa-solid fa-list',
       },
     },
-    {
-      name: 'users',
-      visible: 'practitioner_index',
-      displayName: 'menu.users',
-      meta: {
-        icon: 'fa-solid fa-user-group',
-      },
-    },
+    // {
+    //   name: 'users',
+    //   visible: 'practitioner_index',
+    //   displayName: 'menu.users',
+    //   meta: {
+    //     icon: 'fa-solid fa-user-group',
+    //   },
+    // },
     {
       name: 'patients',
       visible: 'patients_index',

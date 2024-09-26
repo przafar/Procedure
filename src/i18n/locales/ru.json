@@ -167,7 +167,7 @@
   "patientInfo": "Информация о пациенте",
   "patientId": "ID пациента",
   "fullName": "Полное имя",
-  "passport": "Паспорт и JSHSHIR",
+  "passport": "Паспорт",
   "birthDate": "Дата рождения",
   "phoneNumber": "Номер телефона",
   "noPhoneNumber": "Телефон не указан",

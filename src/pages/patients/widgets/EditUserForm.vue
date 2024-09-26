@@ -183,9 +183,9 @@ const ppnValidator = (value: string) => {
           </template>
         </VaInput>
 
-        <VaInput v-model="newUser.ppn" :rules="[validators.required, ppnValidator]" class="w-full sm:w-1/2" name="ppn">
+        <VaInput v-model="newUser.ppn" class="w-full sm:w-1/2" name="ppn">
           <template #label>
-            <span>{{ $t('passport') }}</span><span class="ml-1 text-red-500">*</span>
+            <span>{{ $t('passport') }}</span>
           </template>
         </VaInput>
       </div>

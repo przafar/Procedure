@@ -1,8 +1,14 @@
 <template>
-  <VaSidebar v-model="writableVisible" :width="sidebarWidth" :color="color" minimized-width="0">
+  <VaSidebar
+    v-model="writableVisible"
+    v-if="filteredRoutes.length"
+    :width="sidebarWidth"
+    :color="color"
+    minimized-width="0"
+  >
     <VaAccordion v-model="value" multiple>
-      <VaCollapse v-for="(route, index) in navigationRoutes.routes" :key="index" >
-        <template  #header="{ value: isCollapsed }">
+      <VaCollapse v-for="(route, index) in filteredRoutes" :key="index">
+        <template #header="{ value: isCollapsed }">
           <VaSidebarItem
             v-if="vCan.can(route.visible)"
             :to="route.children ? undefined : { name: route.name }"
@@ -28,8 +34,7 @@
           </VaSidebarItem>
         </template>
         <template v-if="vCan.can(route.visible)" #body>
-
-          <div v-for="(childRoute, index2) in route.children"  :key="index2">
+          <div v-for="(childRoute, index2) in route.children" :key="index2">
             <VaSidebarItem
               :to="{ name: childRoute.name }"
               :active="isActiveChildRoute(childRoute)"
@@ -50,18 +55,15 @@
     </VaAccordion>
   </VaSidebar>
 </template>
+
 <script lang="ts">
-import { defineComponent, watch, ref, computed } from 'vue'
+import { defineComponent, ref, computed, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { storeToRefs } from 'pinia';
-
-import { authStore } from '../../stores/auth';
-import { defineAbilitiesFor } from '../../plugins/ability';
-
+import { storeToRefs } from 'pinia'
+import { authStore } from '../../stores/auth'
+import { defineAbilitiesFor } from '../../plugins/ability'
 import { useI18n } from 'vue-i18n'
 import { useColors } from 'vuestic-ui'
-
-
 import navigationRoutes, { type INavigationRoute } from './NavigationRoutes'
 
 export default defineComponent({
@@ -71,13 +73,13 @@ export default defineComponent({
     mobile: { type: Boolean, default: false },
   },
   emits: ['update:visible'],
-
-  setup: (props, { emit }) => {
+  setup(props, { emit }) {
     const { getColor, colorToRgba } = useColors()
     const route = useRoute()
     const { t } = useI18n()
 
     const value = ref<boolean[]>([])
+    const routes = ref([])
 
     const writableVisible = computed({
       get: () => props.visible,
@@ -90,17 +92,16 @@ export default defineComponent({
       if (!section.children) {
         return route.path.endsWith(`${section.name}`)
       }
-
       return section.children.some(({ name }) => route.path.endsWith(`${name}`))
     }
 
+    const authStorage = authStore()
+    const { user } = storeToRefs(authStorage)
+    const vCan = defineAbilitiesFor(user?.value)
 
-    const authStorage = authStore();
-    const { user } = storeToRefs(authStorage);
-    const vCan = defineAbilitiesFor(user?.value);
-
-    const setActiveExpand = () =>
-      (value.value = navigationRoutes.routes.map((route: INavigationRoute) => routeHasActiveChild(route)))
+    const setActiveExpand = () => {
+      value.value = navigationRoutes.routes.map((route: INavigationRoute) => routeHasActiveChild(route))
+    }
 
     const sidebarWidth = computed(() => (props.mobile ? '100vw' : '280px'))
     const color = computed(() => getColor('background-secondary'))
@@ -109,6 +110,16 @@ export default defineComponent({
     const iconColor = (route: INavigationRoute) => (routeHasActiveChild(route) ? 'primary' : 'secondary')
     const textColor = (route: INavigationRoute) => (routeHasActiveChild(route) ? 'primary' : 'textPrimary')
     const arrowDirection = (state: boolean) => (state ? 'va-arrow-up' : 'va-arrow-down')
+
+    onMounted(() => {
+      routes.value = navigationRoutes.routes || []
+    })
+
+    const filteredRoutes = computed(() => {
+      return routes.value.filter((route) => {
+        return route && route.visible !== undefined && vCan.can(route.visible)
+      })
+    })
 
     watch(() => route.fullPath, setActiveExpand, { immediate: true })
 
@@ -119,7 +130,7 @@ export default defineComponent({
       value,
       color,
       activeColor,
-      navigationRoutes,
+      filteredRoutes,
       routeHasActiveChild,
       isActiveChildRoute,
       t,

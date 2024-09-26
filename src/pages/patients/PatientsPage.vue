@@ -78,7 +78,7 @@ const doShowEditUserModal = ref(false)
 const userToEdit = ref<User | null>(null)
 
 // Fetch users and handle filters
-const { users, isLoading, filters, pagination, fetch, ...usersApi } = useUsers()
+const { users, isLoading, filters, pagination, fetch, searchFetch, ...usersApi } = useUsers()
 
 // Toast notifications
 const { init: notify } = useToast()
@@ -114,6 +114,7 @@ const filterPatients = () => {
   router.push({
     query: {
       ...route.query,
+      page: 1,
       firstname: formValues.value.firstname || undefined,
       lastname: formValues.value.lastname || undefined,
       middlename: formValues.value.middlename || undefined,
@@ -121,7 +122,7 @@ const filterPatients = () => {
     },
   })
 
-  fetch()
+  searchFetch()
 }
 
 // Initialize form values from route query when the component is mounted

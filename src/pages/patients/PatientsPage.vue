@@ -150,20 +150,20 @@ const showAddUserModal = () => {
 
 // Handle saving a user (add or update)
 const onUserSaved = async (user: User) => {
+  console.log(userToEdit.value, 'reee')
   if (userToEdit.value) {
-    await usersApi.update(user)
+    await fetch();
     notify({
       message: `${user.fullname} has been updated`,
       color: 'success',
     })
   } else {
-    await usersApi.add(user)
+    await fetch();
     notify({
       message: `${user.fullname} has been created`,
       color: 'success',
     })
   }
-  fetch() // Refresh the list after saving
 }
 
 // Handle deleting a user

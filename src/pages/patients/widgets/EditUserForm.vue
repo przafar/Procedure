@@ -210,15 +210,14 @@ const ppnValidator = (value: string) => {
           :rules="[validators.required]"
           class="w-full"
           name="birthdate"
+          :startYear="1900"
+          :endYear="new Date().getFullYear()"
           manual-input
         >
           <template #label>
             <span>{{ $t('birthDate') }}</span><span class="ml-1 text-red-500">*</span>
           </template>
         </VaDateInput>
-
-
-
       </div>
 
       <VaInput v-model="newUser.phone" :rules="[validators.required]" class="w-full sm:w-1/2" name="phone">

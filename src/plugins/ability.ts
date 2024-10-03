@@ -47,7 +47,7 @@ export function defineAbilitiesFor(user) {
         can('preferences_index');
         break;
 
-      case 'DTS':
+      case 'ST':
         can('patients_index');
         can('patients_show');
         can('appointments_index');
@@ -58,7 +58,7 @@ export function defineAbilitiesFor(user) {
         can('preferences_index');
         break;
 
-      case 'surgical_dentistry':
+      case 'LR':
         can('patients_index');
         can('patients_show');
         can('appointments_index');
@@ -69,7 +69,7 @@ export function defineAbilitiesFor(user) {
         can('preferences_index');
         break;
 
-      case 'ent_specialist':
+      case 'PR':
         can('patients_index');
         can('patients_show');
         can('appointments_index');
@@ -80,7 +80,7 @@ export function defineAbilitiesFor(user) {
         can('preferences_index');
         break;
 
-      case 'orthopedic_dentistry':
+      case 'LA':
         can('patients_index');
         can('patients_show');
         can('appointments_index');
@@ -90,29 +90,6 @@ export function defineAbilitiesFor(user) {
         can('settings_index');
         can('preferences_index');
         break;
-
-      case 'therapeutic_dentistry':
-        can('patients_index');
-        can('patients_show');
-        can('appointments_index');
-        can('appointments_create');
-        can('appointments_show');
-        can('appointments_edit');
-        can('settings_index');
-        can('preferences_index');
-        break;
-
-      case 'procedural_specialist':
-        can('patients_index');
-        can('patients_show');
-        can('appointments_index');
-        can('appointments_create');
-        can('appointments_show');
-        can('appointments_edit');
-        can('settings_index');
-        can('preferences_index');
-        break;
-
     }
   } else {
     can('logout'); // Если роль не найдена, можно только выйти из системы

@@ -22,6 +22,7 @@
             :options="roleSelectOptions"
             name="gender"
             value-by="value"
+            clearable
           />
         </div>
         <div>
@@ -69,25 +70,25 @@ import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PatientsTable from './widgets/PatientsTable.vue'
 import EditUserForm from './widgets/EditUserForm.vue'
-import { User } from './types'
+import { User, UserRole } from './types'
 import { useUsers } from './composables/useUsers'
 import { useToast } from 'vuestic-ui'
 
-// Modal management
 const doShowEditUserModal = ref(false)
 const userToEdit = ref<User | null>(null)
 
-// Fetch users and handle filters
-const { users, isLoading, filters, pagination, fetch, ...usersApi } = useUsers()
+const { users, isLoading, filters, pagination, fetch, searchFetch, ...usersApi } = useUsers()
 
-// Toast notifications
 const { init: notify } = useToast()
 
-// Router and route instances
 const router = useRouter()
 const route = useRoute()
 
-// Temporary local state for inputs (form values)
+
+const roleSelectOptions: { text: Capitalize<UserRole>; value: UserRole }[] = [
+  { text: 'Erkak', value: '1' },
+  { text: 'Ayol', value: '2' },
+]
 const formValues = ref({
   firstname: '',
   lastname: '',
@@ -95,7 +96,6 @@ const formValues = ref({
   gender: null,
 })
 
-// Function to initialize form values from the route query parameters
 const initializeFormValuesFromRoute = () => {
   const query = route.query
   formValues.value.firstname = query.firstname || ''
@@ -104,7 +104,6 @@ const initializeFormValuesFromRoute = () => {
   formValues.value.gender = query.gender || null
 }
 
-// Update route query params when filter button is clicked
 const filterPatients = () => {
   filters.value.firstname = formValues.value.firstname
   filters.value.lastname = formValues.value.lastname
@@ -114,6 +113,7 @@ const filterPatients = () => {
   router.push({
     query: {
       ...route.query,
+      page: 1,
       firstname: formValues.value.firstname || undefined,
       lastname: formValues.value.lastname || undefined,
       middlename: formValues.value.middlename || undefined,
@@ -121,57 +121,50 @@ const filterPatients = () => {
     },
   })
 
-  fetch()
+  searchFetch()
 }
 
-// Initialize form values from route query when the component is mounted
 onMounted(() => {
   initializeFormValuesFromRoute()
 })
 
-// Update current page method
 const updateCurrentPage = (page) => {
   pagination.current_page = page;
   fetch();
 }
 
-// Show modal for editing an existing user
 const showEditUserModal = (user: User) => {
   userToEdit.value = user
   doShowEditUserModal.value = true
 }
 
-// Show modal for adding a new user
 const showAddUserModal = () => {
   userToEdit.value = null
   doShowEditUserModal.value = true
 }
 
-// Handle saving a user (add or update)
 const onUserSaved = async (user: User) => {
+  console.log(userToEdit.value, 'reee')
   if (userToEdit.value) {
-    await usersApi.update(user)
+    await fetch();
     notify({
       message: `${user.fullname} has been updated`,
       color: 'success',
     })
   } else {
-    await usersApi.add(user)
+    await fetch();
     notify({
       message: `${user.fullname} has been created`,
       color: 'success',
     })
   }
-  fetch() // Refresh the list after saving
 }
 
-// Handle deleting a user
 const onUserDelete = async (user: User) => {
   await usersApi.remove(user)
   notify({
     message: `${user.fullname} has been deleted`,
     color: 'success',
   })
-  fetch() // Refresh the list after deletion
 }
 </script>

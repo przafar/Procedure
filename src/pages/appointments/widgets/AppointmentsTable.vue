@@ -4,6 +4,9 @@ import { User, UserRole } from '../types'
 import { PropType, computed, toRef } from 'vue'
 import { Pagination, Sorting } from '../../../data/pages/users'
 import { useVModel } from '@vueuse/core'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const columns = defineVaDataTableColumns([
   { label: 'Qabul vaqti', key: 'created_at', sortable: false },
@@ -11,7 +14,7 @@ const columns = defineVaDataTableColumns([
   { label: 'Yo`nalishi', key: 'encounter_class.display', sortable: true },
   { label: 'Turi', key: 'encounter_type.display', sortable: true },
   { label: 'Izoh', key: 'reason_text', sortable: true },
-  { label: 'Holat', key: 'status', sortable: true }, // New column for status
+  { label: 'Holat', key: t('status'), sortable: true },
   { label: ' ', key: 'actions', align: 'right' },
 ])
 
@@ -63,9 +66,8 @@ const onUserDelete = async (user: User) => {
 }
 const formatDate = (dateStr) => {
   const date = new Date(dateStr);
-  // Set the timezone offset for GMT+5
   const options = {
-    timeZone: 'Asia/Tashkent', // This is the timezone for GMT+5 (Uzbekistan)
+    timeZone: 'Asia/Tashkent',
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -74,7 +76,10 @@ const formatDate = (dateStr) => {
     hour12: false
   };
 
-  return date.toLocaleString('en-GB', options).replace(',', ''); // Format in DD-MM-YYYY HH:mm
+  const formattedDate = date.toLocaleString('en-GB', options).replace(',', ''); // Format in DD/MM/YYYY HH:mm
+
+  const [datePart, timePart] = formattedDate.split(' ');
+  return `${timePart} ${datePart.replace(/\//g, '/')}`;
 };
 
 const formatIdentifiers = (identifiers: Identifier[] | null | undefined) => {
@@ -123,9 +128,9 @@ const formatIdentifiers = (identifiers: Identifier[] | null | undefined) => {
           rowData.status === 'draft' ? 'bg-gray-500' : '',
           rowData.status === 'entered-in-error' ? 'bg-red-500' : ''
         ]"
-        class="max-w-[120px] text-center"
+        class="max-w-[180px] text-center"
       >
-        {{ rowData.status }}
+        {{ $t(rowData.status) }}
       </div>
     </template>
 
@@ -236,10 +241,9 @@ const formatIdentifiers = (identifiers: Identifier[] | null | undefined) => {
   text-align: right;
 }
 
-/* Для мобильных устройств */
 @media (max-width: 768px) {
   .pagination-container {
-    flex-direction: row; /* Перестраиваем в колонку на маленьких экранах */
+    flex-direction: row;
     align-items: center;
   }
 
@@ -250,17 +254,16 @@ const formatIdentifiers = (identifiers: Identifier[] | null | undefined) => {
 
   .total-count {
     margin-top: 0.5rem;
-    text-align: center; /* Центрируем текст на маленьких экранах */
+    text-align: center;
   }
 
-  /* Стили для кнопок и других элементов */
   .va-button {
     font-size: 14px;
-    padding: 0.25rem 0.5rem; /* Уменьшаем кнопки для мобильных */
+    padding: 0.25rem 0.5rem;
   }
 
   .va-pagination {
-    font-size: 14px; /* Уменьшаем размер текста в пагинации */
+    font-size: 14px;
   }
   .active-page {
     background: red !important;

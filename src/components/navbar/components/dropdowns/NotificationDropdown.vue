@@ -3,7 +3,7 @@
     <template #anchor>
       <VaButton preset="secondary" color="textPrimary">
         <VaBadge overlap>
-          <template #text> 2+</template>
+          <template #text> 0</template>
           <VaIconNotification class="notification-dropdown__icon" />
         </VaBadge>
       </VaButton>

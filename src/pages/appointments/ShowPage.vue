@@ -28,19 +28,26 @@
       <!-- Block 2: Appointment Details -->
       <div class="col-span-12 lg:col-span-8 bg-white p-4 lg:p-6 rounded-lg shadow-lg">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 lg:mb-6">
-          <h2 class="text-lg lg:text-2xl font-bold text-gray-800">{{ $t('appointmentDetails') }}</h2>
-          <div class="mt-3 sm:mt-0 flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <div :class="statusClass(appointmentInfo.status)" class="px-3 py-1 rounded-lg text-white font-bold text-xs sm:text-sm">
-              {{ formatStatus(appointmentInfo.status) }}
+          <div class="flex flex-col">
+            <div>
+              <h2 class="text-lg lg:text-2xl font-bold text-gray-800">{{ $t('appointmentDetails') }}</h2>
             </div>
+            <div class="inline mt-2">
+              <span :class="statusClass(appointmentInfo.status)" class="mt-2 px-3 py-1 rounded-lg text-white font-bold text-xs sm:text-sm ">
+                {{ $t(appointmentInfo.status) }}
+              </span>
+            </div>
+          </div>
+          <div class="mt-3 sm:mt-0 flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+
             <div class="text-gray-500 text-xs sm:text-sm">
               {{ $t('createdAt') }}: {{ formatDate(appointmentInfo.created_at) }}
             </div>
-            <button @click="errorAppointment" class="bg-red-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-red-600 transition-colors duration-200">
+            <button v-if="appointmentInfo.status === 'in-progress' || appointmentInfo.status === 'finished' || appointmentInfo.status === 'draft'" @click="errorAppointment" class="bg-red-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-red-600 transition-colors duration-200">
               {{ $t('enteredInError') }}
             </button>
             <button v-if="appointmentInfo.status === 'in-progress'" @click="editAppointment" class="bg-blue-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-blue-600 transition-colors duration-200">
-              {{ $t('edit') }}
+              {{ $t('addService') }}
             </button>
             <button v-if="appointmentInfo.status === 'in-progress'" @click="endAppointment" class="bg-yellow-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-yellow-600 transition-colors duration-200">
               {{ $t('endAppointment') }}
@@ -81,9 +88,9 @@
             <h2 class="text-lg lg:text-2xl font-bold text-gray-800">{{ $t('prescriptions') }}</h2>
           </div>
           <div v-if="appointmentInfo && appointmentInfo?.status === 'in-progress'" class="ml-4">
-            <button v-if="!appointmentInfo?.prescriptions.length" @click="createPrescription" class="bg-blue-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-blue-600 transition-colors duration-200">Создать рецепт</button>
-            <button v-if="appointmentInfo?.prescriptions.length" @click="updatePrescription" class="bg-green-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-green-600 transition-colors duration-200 ml-4">Редактирования рецепта</button>
-            <button v-if="appointmentInfo?.prescriptions && appointmentInfo?.prescriptions.length > 0" @click="removePrescription" class="ml-4 bg-red-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-red-600 transition-colors duration-200">Удалить</button>
+            <button v-if="!appointmentInfo?.prescriptions.length" @click="createPrescription" class="bg-blue-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-blue-600 transition-colors duration-200">{{ $t('createPrescription') }}</button>
+            <button v-if="appointmentInfo?.prescriptions.length" @click="updatePrescription" class="bg-green-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-green-600 transition-colors duration-200 ml-4">{{ $t('editPrescription') }}</button>
+            <button v-if="appointmentInfo?.prescriptions && appointmentInfo?.prescriptions.length > 0" @click="removePrescription" class="ml-4 bg-red-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-red-600 transition-colors duration-200">{{ $t('delete') }}</button>
           </div>
 
         </div>
@@ -188,10 +195,10 @@
       hide-default-actions
       :before-cancel="beforeEditFormModalClose"
     >
-      <h1>Создания рецепта</h1>
+      <h1>{{ $t('createPrescription') }}</h1>
       <VaForm
         v-slot="{ isValid }"
-        ref="add-user-form"
+        ref="prescriptionForm"
         class="flex-col justify-start items-start gap-4 inline-flex w-full mt-4"
       >
         <div class="self-stretch flex-col justify-start items-start gap-4 flex">
@@ -200,16 +207,16 @@
             <div class="w-full">
               <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="col-span-1">
-                  <VaInput v-model="item.name" placeholder="Name" label="Medication Name" />
+                  <VaInput v-model="item.name" :rules="[validators.required]" :placeholder="$t('medicationName')" :label="$t('medicationName')" />
                 </div>
                 <div class="col-span-1">
-                  <VaInput v-model="item.dosage" placeholder="Dosage" label="Dosage" />
+                  <VaInput v-model="item.dosage" :rules="[validators.required]" :placeholder="$t('dosage')" :label="$t('dosage')" />
                 </div>
                 <div class="col-span-1">
-                  <VaInput v-model="item.duration" placeholder="Duration" label="Duration" />
+                  <VaInput v-model="item.duration" :rules="[validators.required]" :placeholder="$t('duration')" :label="$t('duration')" />
                 </div>
                 <div class="col-span-1">
-                  <VaInput v-model="item.frequency" placeholder="Frequency" label="Frequency" />
+                  <VaInput v-model="item.frequency" :rules="[validators.required]" :placeholder="$t('frequency')" :label="$t('frequency')" />
                 </div>
               </div>
             </div>
@@ -231,7 +238,7 @@
             </button>
           </div>
           <div class="flex flex-col w-full">
-            <VaInput v-model="state.prescriptionData.prescribing_doctor" placeholder="Full name" label="Doctor" />
+            <VaInput v-model="state.prescriptionData.prescribing_doctor" :rules="[validators.required]" :placeholder="$t('fullName')" :label="$t('prescribingDoctor')" />
           </div>
 
           <!-- Reason Section -->
@@ -260,6 +267,7 @@ import { appointmentStore } from '../../stores/appointment';
 import { ServicesStore } from '../../stores/services';
 import { prescriptionStore} from '../../stores/prescription'
 import { validators } from '../../services/utils'
+import { useForm } from 'vuestic-ui'
 
 const route = useRoute();
 const appointmentId = route.params.id;
@@ -273,6 +281,7 @@ const encounter = ServicesStore();
 
 const getEncounterClasses = computed(() => encounter.getEncounterClasses);
 
+const form = useForm('prescriptionForm');
 
 const state = reactive({
   encounterTypesData: [
@@ -426,6 +435,7 @@ const onSave = async () => {
   console.log(payload, 'payload');
   await appointment.UPDATE(appointmentId, payload);
   await fetchDetails();
+  appointmentVisible.value = false;
 };
 const deleteType = (index) => {
   state.encounterTypesData[0].type.splice(index, 1);
@@ -458,15 +468,17 @@ const removePrescription = async () => {
   await fetchDetails();
 }
 const savePrescription = async () => {
-  const payload = {
-    appointment_id: appointmentId,
-    prescribing_doctor: state.prescriptionData.prescribing_doctor,
-    medications: state.prescriptionData.medications,
-    notes: state.prescriptionData.notes,
+  if (form.validate()) {
+    const payload = {
+      appointment_id: appointmentId,
+      prescribing_doctor: state.prescriptionData.prescribing_doctor,
+      medications: state.prescriptionData.medications,
+      notes: state.prescriptionData.notes,
+    }
+    await prescription.CREATE_PRESCRIPTION(payload);
+    await fetchDetails();
+    prescriptionVisible.value = false;
   }
-  await prescription.CREATE_PRESCRIPTION(payload);
-  await fetchDetails();
-  prescriptionVisible.value = false;
 }
 const updatePrescriptionSubmit = async () => {
   const payload = {

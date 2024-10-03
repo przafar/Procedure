@@ -46,7 +46,7 @@ instance.interceptors.response.use(
     return response
   },
   function (error) {
-    if (error.response && error.response.status === 401) {
+    if (error.response && (error.response.status === 403 || error.response.status === 401)) {
       console.log('401 error, redirecting to login')
       router.push({ name: 'login' })
     } else if (error.response && error.response.status === 404) {

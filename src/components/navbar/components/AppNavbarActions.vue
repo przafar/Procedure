@@ -3,15 +3,13 @@
     <VaButton
       v-if="!isMobile"
       preset="secondary"
-      href="https://discord.gg/u7fQdqQt8c"
-      target="_blank"
       color="textPrimary"
       class="app-navbar-actions__item flex-shrink-0 mx-0"
     >
-      {{ t('helpAndSupport') }}
+      {{ userInfo.fullname }}
     </VaButton>
-<!--    <NotificationDropdown class="app-navbar-actions__item" />-->
-    <ProfileDropdown class="app-navbar-actions__item app-navbar-actions__item--profile mr-1" />
+    <NotificationDropdown class="app-navbar-actions__item mr-4" />
+<!--    <ProfileDropdown class="app-navbar-actions__item app-navbar-actions__item&#45;&#45;profile mr-1" />-->
   </div>
 </template>
 
@@ -23,6 +21,8 @@ import GithubButton from './GitHubButton.vue'
 defineProps({
   isMobile: { type: Boolean, default: false },
 })
+
+const userInfo = JSON.parse(localStorage.getItem('user'));
 
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()

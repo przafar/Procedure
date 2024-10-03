@@ -69,6 +69,30 @@ export const useUsers = (options?: {
       isLoading.value = false
     }
   }
+  const searchFetch = async () => {
+    const params = {
+      firstname: filters.value.firstname, // firstname filter
+      lastname: filters.value.lastname, // lastname filter
+      middlename: filters.value.middlename, // middlename filter
+      gender: filters.value.gender, // gender filter
+    }
+
+    isLoading.value = true
+
+    try {
+      router.push({ path: route.path, query: params })
+
+      const { data } = await store.GET_LIST_OF_PATIENTS(params)
+      users.value = data.data
+
+      pagination.value.total = data.pagination.total
+      pagination.value.total_pages = data.pagination.total_pages
+    } catch (error) {
+      console.error('Error fetching users:', error)
+    } finally {
+      isLoading.value = false
+    }
+  }
 
   onMounted(() => {
     initializeFromQuery()
@@ -83,6 +107,7 @@ export const useUsers = (options?: {
     pagination,
     users,
     fetch,
+    searchFetch,
 
     async add(user: User) {
       isLoading.value = true

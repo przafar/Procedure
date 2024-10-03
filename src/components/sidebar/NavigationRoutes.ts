@@ -27,14 +27,14 @@ export default {
         icon: 'fa-solid fa-list',
       },
     },
-    {
-      name: 'users',
-      visible: 'practitioner_index',
-      displayName: 'menu.users',
-      meta: {
-        icon: 'fa-solid fa-user-group',
-      },
-    },
+    // {
+    //   name: 'users',
+    //   visible: 'practitioner_index',
+    //   displayName: 'menu.users',
+    //   meta: {
+    //     icon: 'fa-solid fa-user-group',
+    //   },
+    // },
     {
       name: 'patients',
       visible: 'patients_index',
@@ -52,46 +52,46 @@ export default {
         icon: 'fa-regular fa-calendar-check',
       },
     },
-    {
-      name: 'projects',
-      visible: 'dashboard_index',
-      displayName: 'menu.projects',
-      meta: {
-        icon: 'fa-solid fa-user-shield',
-      },
-    },
-    {
-      name: 'auth',
-      visible: 'dashboard_index',
-      displayName: 'menu.auth',
-      meta: {
-        icon: 'fa-solid fa-arrow-right-to-bracket',
-      },
-      children: [
-        {
-          name: 'login',
-          displayName: 'menu.login',
-        },
-        {
-          name: 'signup',
-          displayName: 'menu.signup',
-        },
-        {
-          name: 'recover-password',
-          displayName: 'menu.recover-password',
-        },
-      ],
-    },
+    // {
+    //   name: 'projects',
+    //   visible: 'dashboard_index',
+    //   displayName: 'menu.projects',
+    //   meta: {
+    //     icon: 'fa-solid fa-user-shield',
+    //   },
+    // },
+    // {
+    //   name: 'auth',
+    //   visible: 'dashboard_index',
+    //   displayName: 'menu.auth',
+    //   meta: {
+    //     icon: 'fa-solid fa-arrow-right-to-bracket',
+    //   },
+    //   children: [
+    //     {
+    //       name: 'login',
+    //       displayName: 'menu.login',
+    //     },
+    //     {
+    //       name: 'signup',
+    //       displayName: 'menu.signup',
+    //     },
+    //     {
+    //       name: 'recover-password',
+    //       displayName: 'menu.recover-password',
+    //     },
+    //   ],
+    // },
 
 
-    {
-      name: 'preferences',
-      visible: 'dashboard_index',
-      displayName: 'menu.preferences',
-      meta: {
-        icon: 'fa-solid fa-user-gear',
-      },
-    },
+    // {
+    //   name: 'preferences',
+    //   visible: 'dashboard_index',
+    //   displayName: 'menu.preferences',
+    //   meta: {
+    //     icon: 'fa-solid fa-user-gear',
+    //   },
+    // },
     {
       name: 'settings',
       visible: 'dashboard_index',

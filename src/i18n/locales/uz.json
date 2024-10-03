@@ -178,7 +178,7 @@
   "appointments": "Qabullar",
   "appointment": "Qabul",
   "createdAt": "Yaratilgan",
-  "direction": "Yo'nalish",
+  "direction": "Yo'nalishi",
   "appointmentType": "Qabul turi",
   "note": "Izoh",
   "noAppointments": "Qabullar topilmadi",
@@ -205,8 +205,8 @@
   "edit": "O'zgartirish",
   "endAppointment": "Yakunlash",
   "startAppointment": "Qabul qilish",
-  "primaryEncounterType": "Asosiy Uchrashuv turi",
-  "encounterType": "Uchrashuv turi",
+  "primaryEncounterType": "Uchrashuv turi",
+  "encounterType": "Xizmat kategoriyasi",
   "reason": "Sababi",
   "addService": "Xizmat qo'shish",
   "add": "Qo'shish",
@@ -231,5 +231,6 @@
   "in-progress": "Jarayonda",
   "finished": "Yakunlandi",
   "draft": "Loyihada",
-  "entered-in-error": "Xato kiritilgan"
+  "entered-in-error": "Xato kiritilgan",
+  "status": "Holat",
 }

@@ -205,8 +205,8 @@
   "edit": "Редактировать",
   "endAppointment": "Завершить",
   "startAppointment": "Начать приём",
-  "primaryEncounterType": "Основной тип встречи",
-  "encounterType": "Тип встречи",
+  "primaryEncounterType": "Тип встречи",
+  "encounterType": "Категория обслуживания",
   "reason": "Причина",
   "addService": "Добавить услугу",
   "add": "Добавить",
@@ -232,4 +232,5 @@
   "finished": "Завершено",
   "draft": "Черновик",
   "entered-in-error": "Введено с ошибкой",
+  "status": "Статус"
 }

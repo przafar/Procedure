@@ -80,6 +80,30 @@ export const prescriptionStore = defineStore('prescription', {
       } finally {
         this.loading = false
       }
+    },
+    async PRINT_PRESCRIPTION(id: string) {
+      this.loading = true
+      try {
+        const response = await axios.get(`prescriptions/${id}/pdf`, {
+          responseType: 'blob', // Указываем тип ответа как blob для бинарных данных (PDF)
+        })
+
+        // Создаем URL для скачивания файла
+        const blob = new Blob([response.data], { type: 'application/pdf' })
+        const link = document.createElement('a')
+        link.href = window.URL.createObjectURL(blob)
+        link.download = `prescription-${id}.pdf` // Имя файла
+        link.click() // Программно вызываем клик для скачивания файла
+
+        console.log('Prescription printed successfully')
+        return response
+      } catch (error) {
+        console.error('Error printing prescription', error)
+        return error
+      } finally {
+        this.loading = false
+      }
     }
+
   },
 })

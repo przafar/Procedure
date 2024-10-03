@@ -9,12 +9,12 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 const columns = defineVaDataTableColumns([
-  { label: 'Qabul vaqti', key: 'created_at', sortable: false },
-  { label: 'F.I.O', key: 'patient.full_name', sortable: true },
-  { label: 'Yo`nalishi', key: 'encounter_class.display', sortable: true },
-  { label: 'Turi', key: 'encounter_type.display', sortable: true },
-  { label: 'Izoh', key: 'reason_text', sortable: true },
-  { label: 'Holat', key: t('status'), sortable: true },
+  { label: t('createdAt'), key: 'created_at', sortable: false },
+  { label: t('fullName'), key: 'patient.full_name', sortable: true },
+  { label: t('direction'), key: 'encounter_class.display', sortable: true },
+  { label: t('encounterType'), key: 'encounter_type.display', sortable: true },
+  { label: t('appointmentDetails'), key: 'reason_text', sortable: true },
+  { label: t('status'), key: 'status', sortable: true },
   { label: ' ', key: 'actions', align: 'right' },
 ])
 

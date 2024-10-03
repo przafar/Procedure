@@ -91,7 +91,10 @@
             <button v-if="!appointmentInfo?.prescriptions.length" @click="createPrescription" class="bg-blue-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-blue-600 transition-colors duration-200">{{ $t('createPrescription') }}</button>
             <button v-if="appointmentInfo?.prescriptions.length" @click="updatePrescription" class="bg-green-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-green-600 transition-colors duration-200 ml-4">{{ $t('editPrescription') }}</button>
             <button v-if="appointmentInfo?.prescriptions && appointmentInfo?.prescriptions.length > 0" @click="removePrescription" class="ml-4 bg-red-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-red-600 transition-colors duration-200">{{ $t('delete') }}</button>
+
           </div>
+          <button v-if="appointmentInfo && appointmentInfo?.status === 'finished' && (appointmentInfo?.prescriptions && appointmentInfo?.prescriptions.length > 0)"  @click="printPrescription" class="bg-blue-500 text-white px-3 py-1 rounded-lg text-xs sm:text-sm hover:bg-blue-600 transition-colors duration-200 ml-4">Печать</button>
+
 
         </div>
         <ul v-if="appointmentInfo?.prescriptions && appointmentInfo?.prescriptions.length > 0" class="space-y-4">
@@ -489,6 +492,9 @@ const updatePrescriptionSubmit = async () => {
   await prescription.UPDATE_PRESCRIPTION(appointmentInfo.value.prescriptions[0].id, payload);
   await fetchDetails();
   prescriptionVisible.value = false;
+}
+const printPrescription = async () => {
+  await prescription.PRINT_PRESCRIPTION(appointmentInfo.value.prescriptions[0].id);
 }
 
 </script>

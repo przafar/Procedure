@@ -50,7 +50,7 @@
     close-button
     hide-default-actions
   >
-    <h1 class="va-h5">{{ userToEdit ? 'Tahrirlash' : 'Bemor qo`shish' }}</h1>
+    <h1 class="va-h5">{{ userToEdit ? 'Редактировать' : 'Добавить пацента' }}</h1>
     <EditUserForm
       ref="editFormRef"
       :user="userToEdit"

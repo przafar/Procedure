@@ -4,7 +4,7 @@
   </div>
   <VaCard>
     <VaCardContent>
-      <div class="grid gap-4 grid-cols-4 mb-4">
+      <div class="grid gap-4 xl:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 grid-cols-1 mb-4">
         <div class="w-full">
           <VaInput v-model="formValues.lastname" :label="$t('lastname')" :placeholder="$t('lastname')" />
         </div>
@@ -25,10 +25,11 @@
             clearable
           />
         </div>
-        <div>
+        <div class="col-span-2">
           <VaButton color="info" @click="filterPatients">{{ $t('filter') }}</VaButton>
           <VaButton class="ml-2" color="warning" @click="clearFilters">Очистить фильтр</VaButton>
         </div>
+
       </div>
 
       <PatientsTable
@@ -54,7 +55,7 @@
     <EditUserForm
       ref="editFormRef"
       :user="userToEdit"
-      :save-button-label="userToEdit ? 'Saqlash' : 'Qo`shish'"
+      :save-button-label="userToEdit ? 'save' : 'add'"
       @close="cancel"
       @save="
         (user) => {

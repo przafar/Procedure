@@ -20,7 +20,7 @@ const props = defineProps({
   },
   saveButtonLabel: {
     type: String,
-    default: 'Saqlash',
+    default: 'Сохранить',
   },
 })
 
@@ -264,7 +264,7 @@ const ppnValidator = (value: string) => {
             <VaSpinner size="small" />
           </span>
           <span v-else>
-            {{ saveButtonLabel }}
+            {{ $t(saveButtonLabel) }}
           </span>
         </VaButton>
       </div>

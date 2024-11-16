@@ -7,9 +7,11 @@ import { validators } from '../../../services/utils'
 import moment from 'moment'
 
 // Маска для латинских букв
-const latinMask = {
-  mask: /^[A-Za-z]+$/
-}
+const cyrillicMask = {
+  mask: /^[А-яЁё]+$/,
+};
+
+
 
 const props = defineProps({
   user: {
@@ -28,7 +30,7 @@ const defaultNewUser: User = {
   middlename: '',
   nnuzb: '',
   ppn: '',
-  phone: '',
+  phone: '+998',
   birthdate: null,
   url: '',
   gender: 'men',
@@ -80,12 +82,20 @@ const isSaving = ref(false)
 
 const onSave = async () => {
   if (form.validate()) {
-    isSaving.value = true
-    const payload = {
+    isSaving.value = true;
+    const payload: any = {
       lastName: newUser.value.lastname.toUpperCase(),
       firstName: newUser.value.firstname.toUpperCase(),
       middleName: newUser.value.middlename.toUpperCase(),
-      identifier: [
+      phoneNumber: newUser.value.phone,
+      url: newUser.value.url,
+      gender: newUser.value.gender === 'men' ? 'male' : 'female',
+      birthDate: moment(newUser.value.birthdate).format('YYYY-MM-DDTHH:mm:ssZ'),
+    };
+
+    // Добавляем identifier только если ppn существует
+    if (newUser.value.ppn) {
+      payload.identifier = [
         {
           id: 1,
           code: 'PPN',
@@ -102,40 +112,37 @@ const onSave = async () => {
           display: 'Идентификационный номер гражданина в Республике Узбекистан (ПИНФЛ)',
           parent_id: null,
         },
-      ],
-      phoneNumber: newUser.value.phone,
-      url: newUser.value.url,
-      gender: newUser.value.gender === 'men' ? 'male' : 'female',
-      birthDate: moment(newUser.value.birthdate).format('YYYY-MM-DDTHH:mm:ssZ'),
+      ];
     }
 
     try {
       if (props.user) {
-        const response = await store.UPDATE_PATIENT(payload, props.user.id)
+        const response = await store.UPDATE_PATIENT(payload, props.user.id);
         if (response.status === 200) {
-          const data = await response.data
-          emit('save', data)
+          const data = await response.data;
+          emit('save', data);
         } else {
-          console.error('Не удалось сохранить данные пользователя:', response)
+          console.error('Не удалось сохранить данные пользователя:', response);
         }
       } else {
-        const response = await store.CREATE_PATIENT(payload)
+        const response = await store.CREATE_PATIENT(payload);
         if (response.status === 201) {
-          const data = await response.data
-          emit('save', data)
+          const data = await response.data;
+          emit('save', data);
         } else {
-          console.error('Не удалось сохранить данные пользователя:', response)
+          console.error('Не удалось сохранить данные пользователя:', response);
         }
       }
     } catch (error) {
-      console.error('Ошибка во время запроса:', error)
+      console.error('Ошибка во время запроса:', error);
     } finally {
-      isSaving.value = false
+      isSaving.value = false;
     }
   }
-}
+};
 
-const latinLettersValidator = (value: string) => {
+
+const cyrillicValidator = (value: string) => {
   const cyrillicRegex = /^[А-яЁё]+$/;
   if (value && !cyrillicRegex.test(value)) {
     return 'Только кирильцские буквы разрешены'
@@ -163,9 +170,8 @@ const ppnValidator = (value: string) => {
         <VaInput
           v-model="newUser.lastname"
           class="w-full sm:w-1/2"
-          :rules="[validators.required, latinLettersValidator]"
+          :rules="[validators.required, cyrillicValidator]"
           name="lastname"
-          v-mask="'A*'"
         >
           <template #label>
             <span>{{ $t('lastname') }}</span><span class="ml-1 text-red-500">*</span>
@@ -174,9 +180,8 @@ const ppnValidator = (value: string) => {
         <VaInput
           v-model="newUser.firstname"
           class="w-full sm:w-1/2"
-          :rules="[validators.required, latinLettersValidator]"
+          :rules="[validators.required, cyrillicValidator]"
           name="firstname"
-          v-mask="'A*'"
         >
           <template #label>
             <span>{{ $t('firstname') }}</span><span class="ml-1 text-red-500">*</span>
@@ -184,10 +189,9 @@ const ppnValidator = (value: string) => {
         </VaInput>
         <VaInput
           v-model="newUser.middlename"
-          :rules="[latinLettersValidator]"
+          :rules="[cyrillicValidator]"
           class="w-full sm:w-1/2"
           name="middlename"
-          v-mask="'A*'"
         >
           <template #label>
             <span>{{ $t('middlename') }}</span>
@@ -205,7 +209,6 @@ const ppnValidator = (value: string) => {
           v-model="newUser.ppn"
           class="w-full sm:w-1/2"
           name="ppn"
-          v-mask="'XXXX XXXX'"
         >
           <template #label>
             <span>{{ $t('passport') }}</span>
@@ -248,7 +251,7 @@ const ppnValidator = (value: string) => {
         :rules="[validators.required]"
         class="w-full sm:w-1/2"
         name="phone"
-        v-mask="'(###) ###-####'"
+        v-mask="'+(998)## ###-##-##'"
       >
         <template #label>
           <span>{{ $t('phoneNumber') }}</span><span class="ml-1 text-red-500">*</span>

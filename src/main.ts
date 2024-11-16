@@ -9,12 +9,13 @@ import router from './router'
 import vuesticGlobalConfig from './services/vuestic-ui/global-config'
 import "@fortawesome/fontawesome-free/css/all.css";
 import App from './App.vue'
-
+import VueTheMask from 'vue-the-mask';
 const app = createApp(App)
 
 app.use(stores)
 app.use(router)
 app.use(i18n)
+app.use(VueTheMask);
 app.use(createVuestic({ config: vuesticGlobalConfig }))
 app.use(createPinia())
 

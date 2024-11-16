@@ -6,6 +6,11 @@ import { patientStore } from '../../../stores/patient'
 import { validators } from '../../../services/utils'
 import moment from 'moment'
 
+// Маска для латинских букв
+const latinMask = {
+  mask: /^[A-Za-z]+$/
+}
+
 const props = defineProps({
   user: {
     type: Object as PropType<User | null>,
@@ -58,7 +63,7 @@ watch(
         phone: newUserProps.phone_number || '',
         birthdate: newUserProps.birth_date || null,
         url: newUserProps.url || '',
-        gender: newUserProps.gender || 'men', // Adjust if necessary
+        gender: newUserProps.gender || 'men',
       }
     } else {
       newUser.value = { ...defaultNewUser }
@@ -71,8 +76,11 @@ const form = useForm('add-user-form')
 
 const emit = defineEmits(['close', 'save'])
 
+const isSaving = ref(false)
+
 const onSave = async () => {
   if (form.validate()) {
+    isSaving.value = true
     const payload = {
       lastName: newUser.value.lastname,
       firstName: newUser.value.firstname,
@@ -103,28 +111,36 @@ const onSave = async () => {
 
     try {
       if (props.user) {
-        await store.UPDATE_PATIENT(payload, props.user.id).then(async (response) => {
-          if (response.status === 200) {
-            const data = await response.data
-            emit('save', data)
-          } else {
-            console.error('Failed to save user data:', response)
-          }
-        })
+        const response = await store.UPDATE_PATIENT(payload, props.user.id)
+        if (response.status === 200) {
+          const data = await response.data
+          emit('save', data)
+        } else {
+          console.error('Не удалось сохранить данные пользователя:', response)
+        }
       } else {
-        await store.CREATE_PATIENT(payload).then(async (response) => {
-          if (response.status === 201) {
-            const data = await response.data
-            emit('save', data)
-          } else {
-            console.error('Failed to save user data:', response)
-          }
-        })
+        const response = await store.CREATE_PATIENT(payload)
+        if (response.status === 201) {
+          const data = await response.data
+          emit('save', data)
+        } else {
+          console.error('Не удалось сохранить данные пользователя:', response)
+        }
       }
     } catch (error) {
-      console.error('Error during request:', error)
+      console.error('Ошибка во время запроса:', error)
+    } finally {
+      isSaving.value = false
     }
   }
+}
+
+const latinLettersValidator = (value: string) => {
+  const cyrillicRegex = /^[А-яЁё]+$/;
+  if (value && !cyrillicRegex.test(value)) {
+    return 'Только кирильцские буквы разрешены'
+  }
+  return true
 }
 
 const roleSelectOptions: { text: Capitalize<UserRole>; value: UserRole }[] = [
@@ -132,19 +148,13 @@ const roleSelectOptions: { text: Capitalize<UserRole>; value: UserRole }[] = [
   { text: 'Ayol', value: 'female' },
 ]
 
-const requiredLabel = (label: string) => {
-  return `${label} *`
-}
 const ppnValidator = (value: string) => {
-  if (!value || value.length !== 8) {
+  if (!value || value.replace(/\s/g, '').length !== 8) {
     return 'PPN должен состоять из 8 символов'
   }
   return true
 }
-
 </script>
-
-
 
 <template>
   <VaForm v-slot="{ isValid }" ref="add-user-form" class="flex-col justify-start items-start gap-4 inline-flex w-full">
@@ -153,8 +163,9 @@ const ppnValidator = (value: string) => {
         <VaInput
           v-model="newUser.lastname"
           class="w-full sm:w-1/2"
-          :rules="[validators.required]"
+          :rules="[validators.required, latinLettersValidator]"
           name="lastname"
+          v-mask="'A*'"
         >
           <template #label>
             <span>{{ $t('lastname') }}</span><span class="ml-1 text-red-500">*</span>
@@ -163,16 +174,23 @@ const ppnValidator = (value: string) => {
         <VaInput
           v-model="newUser.firstname"
           class="w-full sm:w-1/2"
-          :rules="[validators.required]"
+          :rules="[validators.required, latinLettersValidator]"
           name="firstname"
+          v-mask="'A*'"
         >
           <template #label>
             <span>{{ $t('firstname') }}</span><span class="ml-1 text-red-500">*</span>
           </template>
         </VaInput>
-        <VaInput v-model="newUser.middlename" :rules="[validators.required]" class="w-full sm:w-1/2" name="middlename">
+        <VaInput
+          v-model="newUser.middlename"
+          :rules="[latinLettersValidator]"
+          class="w-full sm:w-1/2"
+          name="middlename"
+          v-mask="'A*'"
+        >
           <template #label>
-            <span>{{ $t('middlename') }}</span><span class="ml-1 text-red-500">*</span>
+            <span>{{ $t('middlename') }}</span>
           </template>
         </VaInput>
       </div>
@@ -183,7 +201,12 @@ const ppnValidator = (value: string) => {
           </template>
         </VaInput>
 
-        <VaInput v-model="newUser.ppn" class="w-full sm:w-1/2" name="ppn">
+        <VaInput
+          v-model="newUser.ppn"
+          class="w-full sm:w-1/2"
+          name="ppn"
+          v-mask="'XXXX XXXX'"
+        >
           <template #label>
             <span>{{ $t('passport') }}</span>
           </template>
@@ -220,18 +243,32 @@ const ppnValidator = (value: string) => {
         </VaDateInput>
       </div>
 
-      <VaInput v-model="newUser.phone" :rules="[validators.required]" class="w-full sm:w-1/2" name="phone">
+      <VaInput
+        v-model="newUser.phone"
+        :rules="[validators.required]"
+        class="w-full sm:w-1/2"
+        name="phone"
+        v-mask="'(###) ###-####'"
+      >
         <template #label>
           <span>{{ $t('phoneNumber') }}</span><span class="ml-1 text-red-500">*</span>
         </template>
       </VaInput>
       <div class="flex gap-2 flex-col-reverse items-stretch justify-end w-full sm:flex-row sm:items-center">
         <VaButton preset="secondary" color="secondary" @click="$emit('close')">{{ $t('cancel') }}</VaButton>
-        <VaButton :disabled="!isValid" @click="onSave">{{ saveButtonLabel }}</VaButton>
+        <VaButton :disabled="isSaving || !isValid" @click="onSave">
+          <span v-if="isSaving">
+            <VaSpinner size="small" />
+          </span>
+          <span v-else>
+            {{ saveButtonLabel }}
+          </span>
+        </VaButton>
       </div>
     </div>
   </VaForm>
 </template>
+
 <style scoped>
 .red-star {
   color: red;

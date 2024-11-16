@@ -52,10 +52,10 @@ const test = ref(5)
 
 const onUserDelete = async (user: User) => {
   const agreed = await confirm({
-    title: t('Delete user'),
-    message: t('Are you sure you want to delete {name}?', { name: user.fullname }),
-    okText: t('Delete'),
-    cancelText: t('Cancel'),
+    title: t('Удалить'),
+    message: t(`Вы действительно хотите удалить ${user.full_name}`),
+    okText: t('Удалить'),
+    cancelText: t('Отменить'),
     size: 'small',
     maxWidth: '380px',
   })

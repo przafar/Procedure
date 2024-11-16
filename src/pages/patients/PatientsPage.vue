@@ -26,7 +26,8 @@
           />
         </div>
         <div>
-          <VaButton color="warning" @click="filterPatients">{{ $t('filter') }}</VaButton>
+          <VaButton color="info" @click="filterPatients">{{ $t('filter') }}</VaButton>
+          <VaButton class="ml-2" color="warning" @click="clearFilters">Очистить фильтр</VaButton>
         </div>
       </div>
 
@@ -159,11 +160,35 @@ const onUserSaved = async (user: User) => {
     })
   }
 }
+const clearFilters = () => {
+  formValues.value.firstname = '';
+  formValues.value.lastname = '';
+  formValues.value.middlename = '';
+  formValues.value.gender = null;
+
+  filters.value.firstname = '';
+  filters.value.lastname = '';
+  filters.value.middlename = '';
+  filters.value.gender = null;
+
+  router.push({
+    query: {
+      ...route.query,
+      page: 1,
+      firstname: undefined,
+      lastname: undefined,
+      middlename: undefined,
+      gender: undefined,
+    },
+  });
+
+  searchFetch();
+};
 
 const onUserDelete = async (user: User) => {
   await usersApi.remove(user)
   notify({
-    message: `${user.fullname} has been deleted`,
+    message: `${user?.full_name} удалено`,
     color: 'success',
   })
 }

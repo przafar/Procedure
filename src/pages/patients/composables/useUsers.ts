@@ -2,6 +2,7 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { patientStore } from '../../../stores/patient'
 import { Filters, Pagination, User } from '../types'
+import { log } from 'node:console'
 
 const makePaginationRef = () => ref<Pagination>({
   current_page: 1,
@@ -132,7 +133,8 @@ export const useUsers = (options?: {
     async remove(user: User) {
       isLoading.value = true
       try {
-        await store.REMOVE_USER(user)
+        console.log('user', user)
+        await store.DELETE_PATIENT(user.id)
         await fetch()
       } finally {
         isLoading.value = false

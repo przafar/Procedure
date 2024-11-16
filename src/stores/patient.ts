@@ -58,5 +58,16 @@ export const patientStore = defineStore('patient', {
           return error
         })
     },
+    async DELETE_PATIENT( id: string) {
+      return await axios
+        .delete(`patients/${id}`)
+        .then((e) => {
+          console.log(e, 'Success')
+          return e
+        })
+        .catch((error) => {
+          return error
+        })
+    },
   },
 })

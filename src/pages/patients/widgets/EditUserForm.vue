@@ -82,9 +82,9 @@ const onSave = async () => {
   if (form.validate()) {
     isSaving.value = true
     const payload = {
-      lastName: newUser.value.lastname,
-      firstName: newUser.value.firstname,
-      middleName: newUser.value.middlename,
+      lastName: newUser.value.lastname.toUpperCase(),
+      firstName: newUser.value.firstname.toUpperCase(),
+      middleName: newUser.value.middlename.toUpperCase(),
       identifier: [
         {
           id: 1,

@@ -69,5 +69,16 @@ export const appointmentStore = defineStore('appointment', {
           return error
         })
     },
+    async DELETE_APPOINTMENT( id: string) {
+      return await axios
+        .delete(`appointments/${id}`)
+        .then((e) => {
+          console.log(e, 'Success')
+          return e
+        })
+        .catch((error) => {
+          return error
+        })
+    },
   },
 })

@@ -8,7 +8,15 @@
     >
       {{ userInfo.fullname }}
     </VaButton>
-    <NotificationDropdown class="app-navbar-actions__item mr-4" />
+    <NotificationDropdown class="app-navbar-actions__item " />
+    <VaButton
+      preset="secondary"
+      color="textPrimary"
+      class="app-navbar-actions__item flex-shrink-0 mr-4"
+      @click="logout"
+    >
+      <VaIcon name="logout" color="secondary" />
+    </VaButton>
 <!--    <ProfileDropdown class="app-navbar-actions__item app-navbar-actions__item&#45;&#45;profile mr-1" />-->
   </div>
 </template>
@@ -26,6 +34,13 @@ const userInfo = JSON.parse(localStorage.getItem('user'));
 
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
+
+
+const logout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = '/login';
+}
 </script>
 
 <style lang="scss">

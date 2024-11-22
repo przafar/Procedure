@@ -98,9 +98,13 @@ export const useUsers = (options?: {
 
     async remove(user: User) {
       isLoading.value = true
-      await removeUser(user)
-      await fetch()
-      isLoading.value = false
+      try {
+        console.log('user', user)
+        await store.DELETE_APPOINTMENT(user.id)
+        await fetch()
+      } finally {
+        isLoading.value = false
+      }
     },
   }
 }

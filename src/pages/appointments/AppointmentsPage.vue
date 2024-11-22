@@ -47,7 +47,7 @@ const onUserSaved = async (user: User) => {
 const onUserDelete = async (user: User) => {
   await usersApi.remove(user)
   notify({
-    message: `${user.fullname} ${$t('hasBeenDeleted')}`,
+    message: `${user?.full_name} удалено`,
     color: 'success',
   })
 }
@@ -94,7 +94,7 @@ const beforeEditFormModalClose = async (hide: () => unknown) => {
         :pagination="pagination"
         @update:current_page="pagination.current_page = $event; fetchUsers()"
         @editUser="showEditUserModal"
-        @deleteUser="onUserDelete"
+        @deleteAppointment="onUserDelete"
       />
     </VaCardContent>
   </VaCard>

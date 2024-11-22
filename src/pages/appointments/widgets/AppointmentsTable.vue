@@ -30,7 +30,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits<{
-  (event: 'edit-user', user: User): void
+  (event: 'delete-appointment', user: User): void
   (event: 'delete-user', user: User): void
   (event: 'update:sortBy', sortBy: Sorting['sortBy']): void
   (event: 'update:sortingOrder', sortingOrder: Sorting['sortingOrder']): void
@@ -51,6 +51,7 @@ const totalPages = computed(() => Math.ceil(props.pagination.total / props.pagin
 const { confirm } = useModal()
 
 const onUserDelete = async (user: User) => {
+  console.log(user, 'user')
   const agreed = await confirm({
     title: 'Delete user',
     message: `Are you sure you want to delete ${user.fullname}?`,
@@ -61,7 +62,7 @@ const onUserDelete = async (user: User) => {
   })
 
   if (agreed) {
-    emit('delete-user', user)
+    emit('delete-appointment', user)
   }
 }
 const formatDate = (dateStr) => {
@@ -157,7 +158,6 @@ const formatIdentifiers = (identifiers: Identifier[] | null | undefined) => {
         <VaButton
           preset="primary"
           size="small"
-          disabled
           icon="mso-delete"
           color="danger"
           aria-label="Delete appointment"

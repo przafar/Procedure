@@ -54,7 +54,6 @@ export const useUsers = (options?: {
       const { data } = await store.GET_LIST_OF_APPOINTMENTS(params)
       users.value = data.data
 
-      // Обновляем информацию о пагинации (общее количество элементов, страниц и т.д.)
       pagination.value.total = data.pagination.total
       pagination.value.per_page = data.pagination.per_page
       pagination.value.current_page = data.pagination.current_page
@@ -73,7 +72,6 @@ export const useUsers = (options?: {
   })
 
   // Следим за изменениями в пагинации или фильтрах и загружаем данные при их изменении
-  watch([pagination, filters], fetch, { deep: true })
 
   return {
     isLoading,

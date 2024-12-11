@@ -12,7 +12,7 @@ const columns = defineVaDataTableColumns([
   { label: t('createdAt'), key: 'created_at', sortable: false },
   { label: t('fullName'), key: 'patient.full_name', sortable: true },
   { label: t('direction'), key: 'encounter_class.display', sortable: true },
-  { label: t('encounterType'), key: 'encounter_type.display', sortable: true },
+  { label: t('prescribingDoctor'), key: 'practitioner.fullname', sortable: true },
   { label: t('appointmentDetails'), key: 'reason_text', sortable: true },
   { label: t('status'), key: 'status', sortable: true },
   { label: ' ', key: 'actions', align: 'right' },

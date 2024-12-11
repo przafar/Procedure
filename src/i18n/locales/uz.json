@@ -222,8 +222,8 @@
   "filter": "Filtr",
   "medicationName": "Dori nomi",
   "dosage": "Dozasi",
-  "duration": "Davomiyligi",
-  "frequency": "Qabul qilish tez-tezligi",
+  "duration": "2 tabletkadan 3 mahal 20 kun ovqatdan 20 daqiqa oldin",
+  "frequency": "Qabul qilish tezligi",
   "createPrescription": "Retsept yaratish",
   "editPrescription": "Retseptni tahrirlash",
   "delete": "O'chirish",
@@ -233,4 +233,5 @@
   "draft": "Loyihada",
   "entered-in-error": "Xato kiritilgan",
   "status": "Holat",
+  "days": "Kun"
 }

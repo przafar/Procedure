@@ -213,14 +213,13 @@
                   <VaInput v-model="item.name" :rules="[validators.required]" :placeholder="$t('medicationName')" :label="$t('medicationName')" />
                 </div>
                 <div class="col-span-1">
-                  <VaInput v-model="item.dosage" :rules="[validators.required]" :placeholder="$t('dosage')" :label="$t('dosage')" />
+                  <VaInput v-model="item.dosage" :placeholder="$t('dosage')" :label="$t('dosage')" />
                 </div>
-                <div class="col-span-1">
-                  <VaInput v-model="item.duration" :rules="[validators.required]" :placeholder="$t('duration')" :label="$t('duration')" />
+
+                <div class="col-span-2">
+                  <VaTextarea v-model="item.frequency" :label="$t('duration')" :placeholder="$t('frequency')" class="w-full" />
                 </div>
-                <div class="col-span-1">
-                  <VaInput v-model="item.frequency" :rules="[validators.required]" :placeholder="$t('frequency')" :label="$t('frequency')" />
-                </div>
+
               </div>
             </div>
 
@@ -399,6 +398,7 @@ const editAppointment = async () => {
 const startAppointment = async () => {
   const payload = {
     status: 'in-progress',
+    practitioner: JSON.parse(localStorage.getItem('user')).id,
   }
   await appointment.UPDATE_STATUS(appointmentId, payload);
   await fetchDetails();

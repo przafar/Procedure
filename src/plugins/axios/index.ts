@@ -7,7 +7,7 @@ const BASE_URL = config.VITE_ENV === 'dev' ? config.VITE_API_BASE_URL_DEV : conf
 // Ensure the baseURL has the correct protocol
 const instance = axios.create({
   baseURL: BASE_URL || 'http://localhost:3001/api/',
-  timeout: 10000,  // Reduced timeout
+  timeout: 100000,  // Reduced timeout
   headers: {
     Accept: 'application/json, text/plain, */*',
     'Content-Type': 'application/json',
